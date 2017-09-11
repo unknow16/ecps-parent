@@ -59,8 +59,7 @@ function delBrand(brandId){
 								<td>${brand.brandSort }</td>
 								<td><a
 									href="${path }/brand/getBrand.do?brandId=${brand.brandId}">编辑</a>
-									<a href="javascript:void(0);"
-									onclick="delBrand(${brand.brandId})">删除</a></td>
+									<a href="javascript:void(0);" onclick="delBrand(${brand.brandId})">删除</a></td>
 							</tr>
 						</c:forEach>
 					</tbody>

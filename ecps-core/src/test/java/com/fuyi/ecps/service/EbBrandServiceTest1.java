@@ -20,9 +20,9 @@ public class EbBrandServiceTest1 {
 	@Test
 	public void testSaveBrand() {
 		EbBrand ebBrand = new EbBrand();
-		ebBrand.setBrandId(22l);
-		ebBrand.setBrandDesc("很大");
-		ebBrand.setBrandName("苹果");
+		ebBrand.setBrandId(11l);
+		ebBrand.setBrandDesc("很大大");
+		ebBrand.setBrandName("鸭梨");
 		ebBrand.setBrandSort(1);
 		ebBrand.setImgs("http://www.baidu.com");
 		ebBrand.setWebsite("http://www.baidu.com");

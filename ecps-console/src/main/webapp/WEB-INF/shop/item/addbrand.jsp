@@ -7,6 +7,145 @@
 <script type="text/javascript" src="<c:url value='/${system}/res/js/jquery.form.js'/>"></script>
 <script type="text/javascript">
 $(function(){
+	
+	//离开焦点校验
+	$("#form111").find("[reg2]").blur(function(){
+			var val = $(this).val(); //输入值
+			var reg = $(this).attr("reg2"); //正则表达式
+			var tip = $(this).attr("tip"); //提示信息
+			
+			var regExp = new RegExp(reg); //创建正则表达式对象
+			
+			if(!regExp.test($.trim(val))) {
+				$(this).next("span").html("<font color='red'>" + tip + "</font>");
+			} else {
+				var inputName = $(this).attr("name");
+				if(inputName == "brandName"){
+					var result = validBrandName(val);
+					if(result == "yes") {
+						$(this).next("span").html("<font color='red'>品牌已经存在！</font>");
+						isSubmit = false;
+						return false; //终止后面的校验
+					} else {
+						$(this).next("span").html("");
+					}
+				}
+			}
+		});
+	
+	$("#form111").find("[reg1]").blur(function(){
+		var val = $(this).val(); //输入值
+		var reg = $(this).attr("reg1"); //正则表达式
+		var tip = $(this).attr("tip"); //提示信息
+		
+		var regExp = new RegExp(reg); //创建正则表达式对象
+		
+		if(val != null && $.trim(val) != "" && !regExp.test($.trim(val))) { //有值时校验
+			$(this).next("span").html("<font color='red'>" + tip + "</font>");
+		} else {
+			$(this).next("span").html("");
+		}
+	});
+	
+	//提交时校验
+	$("#form111").submit(function(){
+		//必填校验
+		var isSubmit = true;
+		$(this).find("[reg2]").each(function(){
+			var val = $(this).val(); //输入值
+			var reg = $(this).attr("reg2"); //正则表达式
+			var tip = $(this).attr("tip"); //提示信息
+			
+			var regExp = new RegExp(reg); //创建正则表达式对象
+			
+			if(!regExp.test($.trim(val))) {
+				isSubmit = false;
+				$(this).next("span").html("<font color='red'>" + tip + "</font>");
+				
+				return false; //第一个校验不通过，后面的不校验
+			} else {
+				
+				var inputName = $(this).attr("name");
+				if(inputName == "brandName"){
+					var result = validBrandName(val);
+					if(result == "yes") {
+						$(this).next("span").html("<font color='red'>品牌已经存在！</font>");
+						isSubmit = false;
+						return false; //终止后面的校验
+					} else {
+						$(this).next("span").html("");
+					}
+				}
+			}
+		});
+		
+		//非必填,无值可以提交，有值才校验
+		$(this).find("[reg1]").each(function(){
+			var val = $(this).val(); //输入值
+			var reg = $(this).attr("reg1"); //正则表达式
+			var tip = $(this).attr("tip"); //提示信息
+			
+			var regExp = new RegExp(reg); //创建正则表达式对象
+			
+			if(val != null && $.trim(val) != "" && !regExp.test($.trim(val))) { //有值时校验
+				isSubmit = false;
+				$(this).next("span").html("<font color='red'>" + tip + "</font>");
+				
+				return false; //第一个校验不通过，后面的不校验
+			} else {
+				$(this).next("span").html("");
+			}
+		});
+		
+		if(isSubmit) {
+			tipShow("#refundLoadDiv");
+		}
+		
+		return isSubmit;
+	});
+});
+
+/**
+ * 品牌名重校验
+ */
+function validBrandName(brandName) {
+	var result = "no";
+	var option = {
+		url:"${path}/brand/validBrandName.do",
+		type:"post",
+		async:false, //同步请求
+		data:{
+			brandName:brandName
+		},
+		dataType:"text",
+		success:function(responseText) {
+			result = responseText;
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	};
+	$.ajax(option);
+	return result;
+}
+
+function submitUpload() {
+	var option = {
+		url:"${path}/upload/uploadPic.do",//如果不指定url那么就使用使用提交表单的url，如果指定就使用当前的url
+		dataType:"text",
+		success:function(responseText){
+			var jsonObj = $.parseJSON(responseText);
+			$("#imgsImgSrc").attr("src", jsonObj.realPath);
+			$("#imgs").val(jsonObj.relativePath);
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	};
+	$("#form111").ajaxSubmit(option);
+}
+
+/* $(function(){
 	$("#form111").submit(function(){
 		var isSubmit = true;
 		$(this).find("[reg2]").each(function(){
@@ -104,10 +243,10 @@ $(function(){
 				$(this).next("span").html("");
 			}
 		})
-})
+}); */
 	
 //如果在方法中使用ajax的返回值作为方法的返回值一定要把ajax变成同步的	
-function validBrandName(brandName){
+/* function validBrandName(brandName){
 	var result = "no";
 	var option = {
 			url:"${path}/brand/validBrandName.do",
@@ -126,10 +265,10 @@ function validBrandName(brandName){
 	};
 	$.ajax(option);
 	return result;
-}
+} */
 
 //上传图片
-function submitUpload(){
+/* function submitUpload(){
 	var option = {
 			url:"${path}/upload/uploadPic.do",//如果不指定url那么就使用使用提交表单的url，如果指定就使用当前的url
 			dataType:"text",
@@ -142,11 +281,9 @@ function submitUpload(){
 			error:function(){
 				alert("系统错误");
 			}
-			
 	};
 	$("#form111").ajaxSubmit(option);
-	
-}
+} */
 </script>
 </head>
 <body id="main">
@@ -199,7 +336,7 @@ function submitUpload(){
 							class="text small" /> <span class="pos">&nbsp;</span>
 					</p>
 					<p>
-						<label>&nbsp;</label><input type="submit" name="button1" d
+						<label>&nbsp;</label><input type="submit" name="button1"
 							class="hand btn83x23" value="完成" /><input type="button"
 							class="hand btn83x23b" id="reset1" value='取消'
 							onclick="backList('${backurl}')" />
