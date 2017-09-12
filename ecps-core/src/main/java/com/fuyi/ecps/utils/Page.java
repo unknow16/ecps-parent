@@ -4,34 +4,15 @@ import java.util.List;
 
 public class Page {
 	
-	/**
-	 * 当前页码（已知）
-	 */
-	private int pageNo = 1;
+	private int pageNo = 1; //当前页码（传值）
+	private int pageSize = 5; //每页记录数（定值，已知）
+	private int totalCount = 0; //指定查询条件下 的记录数（传值）
+	private int totalPage = 1;//指定查询下的总页数（算得）
 	
-	/**
-	 * 每页记录数（已知）
-	 */
-	private int pageSize = 5;
-	/**
-	 * 指定查询条件下 的记录数（已知）
-	 */
-	private int totalCount = 0;
-	/**
-	 * 指定查询下的总页数（未知）
-	 */
-	private int totalPage = 1;
-	/**
-	 * 开始行号（未知）
-	 */
-	private int startNum = 0;
+	private int startNum = 0; //开始行号（未知）
+	private int endNum = 0; //结束行号
 	
-	/**
-	 * 未知
-	 */
-	private int endNum = 0;
-	
-	private List<?> list;
+	private List<?> list; //结果集
 
 	public int getPageNo() {
 		return pageNo;

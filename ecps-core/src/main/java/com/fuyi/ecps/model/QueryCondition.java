@@ -2,11 +2,11 @@ package com.fuyi.ecps.model;
 
 public class QueryCondition {
 	
-	private Integer auditStatus;
+	private Integer auditStatus; //审核状态
 	
-	private Integer showStatus;
+	private Integer showStatus; //上下架
 	
-	private Long brandId;
+	private Long brandId; 
 	
 	private String itemName;
 	
@@ -14,7 +14,7 @@ public class QueryCondition {
 	
 	private Integer endNum;
 	
-	private Integer pageNo;
+	private Integer pageNo; //当前页
 	
 	
 

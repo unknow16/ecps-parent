@@ -1,3 +1,32 @@
+-- 创建数据表空间
+create tablespace gx1110 
+logging
+datafile ''
+size 32m
+autoextend on 
+next 32m maxsize 2048m
+extend management local;
+
+-- 创建用户表空间
+--1.创建临时表空间
+
+
+-- drop tablespace bhz_temp including contents and datafiles;
+
+--2.创建表空间
+create tablespace bhz 
+datafile '/opt/oracle/oradata/orcl/bhz_01_20170910.dbf'
+size 200m autoextend on next 100m maxsize 400m; 
+
+-- drop tablespace bhz including contents and datafiles;
+-- alter tablespace bhz add datafile '/opt/oracle/oradata/orcl/bhz_02_20170910.dbf' size 200m autoextend on;
+
+--3.创建用户并指定表空间
+create user bhz identified by bhz default tablespace bhz temporary tablespace bhz_temp;
+
+--4.赋权
+grant dba to bhz;
+
 
 -- 品牌表
 CREATE TABLE `eb_brand` (

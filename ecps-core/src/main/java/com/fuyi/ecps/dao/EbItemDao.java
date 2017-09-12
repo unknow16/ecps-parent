@@ -9,7 +9,6 @@ public interface EbItemDao {
 	
 	public List<EbItem> selectItemByCondition(QueryCondition qc);
 	
-	
 	public Integer selectItemByConditionCount(QueryCondition qc);
 
 }

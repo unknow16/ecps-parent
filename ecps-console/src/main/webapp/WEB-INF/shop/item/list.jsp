@@ -102,7 +102,7 @@ $(function(){
         <p>搜索：
         <select id="brandId" name="brandId">
         	<option value="">请选择品牌</option>
-            <c:forEach items="${bList }" var="brand">
+            <c:forEach items="${brandList }" var="brand">
             	<option value="${brand.brandId }" <c:if test="${qc.brandId == brand.brandId }">selected</c:if> >${brand.brandName }</option>
             </c:forEach>
         </select>
