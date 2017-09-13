@@ -12,6 +12,7 @@
 
 $(document).ready(function(){
    
+		//fckeditor 的配置
 		var fck = new FCKeditor("itemDesc");
 		fck.BasePath = "${path}/ecps/console/res/plugins/fckeditor/";
 		fck.Config["ImageUploadURL"] = "${path}/upload/uploadForFck.do";
@@ -247,12 +248,12 @@ function clickRemove(id){
 </span></h2>
 <div id="tab_1" class="edit set">
    
-	<p><label><samp>*</samp>商品名称：</label><i+nput type="text" reg1="^(.{1,100})$" desc="100以内任意字符" id="itemName" name="itemName" class="text state" value="${ebItem.itemName}"  maxlength="100"/></p>
+	<p><label><samp>*</samp>商品名称：</label><input type="text" reg1="^(.{1,100})$" desc="100以内任意字符" id="itemName" name="itemName" class="text state" value="${ebItem.itemName}"  maxlength="100"/></p>
 	<input type="hidden" id="catId" name="catId" value="1" />
 	<p><label>商品品牌：</label>
 	<select id="brandId" name="brandId">
 		<option value="">请选择</option>
-        <c:forEach items="${bList }" var="brand">
+        <c:forEach items="${brandList }" var="brand">
         	<option value="${brand.brandId }">${brand.brandName }</option>
         </c:forEach>
 	</select></p>
@@ -297,9 +298,12 @@ function clickRemove(id){
 </div>
 
 <div id="tab_3" class="edit set" style="display: none">
+    
     <c:if test="${fn:length(commList) == 0}">
     <p><label></label>无属性</p>
     </c:if>
+    
+    
 	    <c:forEach items="${commList }" var="comm">
 	    	<p><label>${comm.featureName}：</label>
 		    	<c:if test="${comm.inputType == 1 }">

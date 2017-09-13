@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.impl.util.json.JSONObject;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.fuyi.ecps.utils.ECPSUtils;
+import com.fuyi.ecps.utils.UploadResponse;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
@@ -75,6 +77,59 @@ public class EbUploadController {
 			jo.accumulate("relativePath", relativePath);
 			String result = jo.toString();
 			out.write(result);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@RequestMapping("/uploadForFck.do")
+	public void uploadForFck(HttpServletRequest request, HttpServletResponse resp) {
+		
+		//将request转换成复杂类型
+		MultipartHttpServletRequest req = (MultipartHttpServletRequest) request;
+		
+		//获得文件map，可能多个
+		Map<String, MultipartFile> fileMap = req.getFileMap();
+		//获得文件名keySet
+		Set<String> keySet = fileMap.keySet();
+		Iterator<String> iterator = keySet.iterator();
+		//获得文件名
+		String fileInputName = iterator.next();
+		//根据文件key,获得文件对象
+		MultipartFile mf = fileMap.get(fileInputName);
+		
+		try {
+			//文件字节数组
+			byte[] bs = mf.getBytes();
+			
+			String fileName = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+			Random random = new Random();
+			for(int i=0; i<3; i++) {
+				fileName = fileName + random.nextInt(10);
+			}
+			
+			//原文件名
+			String originalFilename = mf.getOriginalFilename();
+			//文件后缀
+			String fileSuffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+			
+			//绝对路径，展示使用
+			String realPath = ECPSUtils.readProp("file_server_url") + "/upload/" + fileName + fileSuffix;
+			//相对路径，存数据库
+			String relativePath = "/upload/" + fileName + fileSuffix;
+			
+			//创建jersy的客户端
+			Client client = Client.create();
+			//创建web资源对象
+			WebResource resource = client.resource(realPath);
+			//上传
+			resource.put(bs);
+			
+			//返回fck UploadResponse
+			UploadResponse ur = new UploadResponse(UploadResponse.EN_OK, realPath);
+			resp.getWriter().println(ur);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

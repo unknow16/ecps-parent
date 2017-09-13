@@ -8,8 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fuyi.ecps.model.EbBrand;
+import com.fuyi.ecps.model.EbFeature;
 import com.fuyi.ecps.model.QueryCondition;
 import com.fuyi.ecps.service.EbBrandService;
+import com.fuyi.ecps.service.EbFeatureService;
 import com.fuyi.ecps.service.EbItemService;
 import com.fuyi.ecps.utils.Page;
 
@@ -22,6 +24,9 @@ public class EbItemController {
 	
 	@Autowired
 	private EbBrandService brandService;
+	
+	@Autowired
+	private EbFeatureService featureService;
 
 	@RequestMapping("/listItem.do")
 	public String listItem(QueryCondition qc, Model model) {
@@ -36,5 +41,15 @@ public class EbItemController {
 		model.addAttribute("brandList", brandList);
 		
 		return "item/list";
+	}
+	
+	@RequestMapping("/toAddItem.do")
+	public String toAddItem(Model model) {
+		List<EbBrand> brandList = brandService.selectBrand();
+		List<EbFeature> commList = featureService.selectCommFeature();
+		
+		model.addAttribute("brandList", brandList);
+		model.addAttribute("commList", commList);
+		return "item/addItem";
 	}
 }

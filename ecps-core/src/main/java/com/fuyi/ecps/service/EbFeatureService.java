@@ -6,7 +6,6 @@ import com.fuyi.ecps.model.EbFeature;
 
 public interface EbFeatureService {
 	
-	
 	public List<EbFeature> selectCommFeature();
 	public List<EbFeature> selectSpecFeature();
 	public List<EbFeature> selectIsSelFeature();

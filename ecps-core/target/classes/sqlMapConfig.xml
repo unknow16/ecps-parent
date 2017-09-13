@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	<mappers>
 		<mapper resource="com/fuyi/ecps/sqlMap/EbBrandMapper.xml" />
 		<mapper resource="com/fuyi/ecps/sqlMap/EbItemMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/EbFeatureMapper.xml"/>
 	</mappers>
 
 </configuration>
