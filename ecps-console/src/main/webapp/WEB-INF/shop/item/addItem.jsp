@@ -30,62 +30,69 @@ $(document).ready(function(){
 	       		return false;
 	       	}
 	       	return true;
-       }
-     $("#button1").click(function(){
-    	$("#myForm").ajaxSubmit({
- 		 	 beforeSubmit:valid,
- 		 	contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-			 type:'post',
-            dataType: "text",
-			 success:function(responseText){
-				 alert("success");
-			 }
- 	 	});
-    	return false;
-    });
-       
-    function skuSepValueValid(){
-    	var list = new Array();
-    	var result=true;
-    	$(".sp_0").each(function(){
-    		var buffer="";
-    		var checkedNum = 0;
-    		$(this).find(".specValue4").each(function(){
-                var obj=$(this).next();
-                if(obj.attr("type")=="radio"){
-                	var tempBuffer = $(this).nextAll("input:checked").val();
-                	if($.trim(tempBuffer) != "" && tempBuffer != null){
-                		checkedNum++; 
-                	}
-                   buffer+= tempBuffer;
-                }
-    		});
-    		
-    		
-    		if(result){
-    			list.push(buffer);
-    		}else{
-    			return false;
-    		}
+        }
+        
+        
+	     $("#button1").click(function(){
+	    	$("#myForm").ajaxSubmit({
+	 		 	 beforeSubmit:valid,
+	 		 	contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+				 type:'post',
+	            dataType: "text",
+				 success:function(responseText){
+					 alert("success");
+				 }
+	 	 	});
+	    	return false;
     	});
-    	return result;
-    }
+       
+	    function skuSepValueValid(){
+	    	var list = new Array();
+	    	var result=true;
+	    	$(".sp_0").each(function(){
+	    		var buffer="";
+	    		var checkedNum = 0;
+	    		$(this).find(".specValue4").each(function(){
+	                var obj=$(this).next();
+	                if(obj.attr("type")=="radio"){
+	                	var tempBuffer = $(this).nextAll("input:checked").val();
+	                	if($.trim(tempBuffer) != "" && tempBuffer != null){
+	                		checkedNum++; 
+	                	}
+	                   buffer+= tempBuffer;
+	                }
+	    		});
+	    		
+	    		
+	    		if(result){
+	    			list.push(buffer);
+	    		}else{
+	    			return false;
+	    		}
+	    	});
+	    	return result;
+	    }
    
-	function showResponse(responseText, statusText){ 
-		$("#button1").removeAttr("disabled");
-		var obj=eval("("+responseText+")");
-		alert(obj.message);
-		if(obj.result=="success"){
-			document.location.href="<c:url value='/${system }/item/listEntity.do'/>";	
+		function showResponse(responseText, statusText){ 
+			$("#button1").removeAttr("disabled");
+			var obj=eval("("+responseText+")");
+			alert(obj.message);
+			if(obj.result=="success"){
+				document.location.href="<c:url value='/${system }/item/listEntity.do'/>";	
+			}
+			
 		}
-		
-	}
     
 });
+
+
+
 //==================================================================================================================
 $(function(){
+	
 	var divNum=1;
 	var tObj;
+	
 	$("#tabs a").each(function(){
 		if($(this).attr("class").indexOf("here") == 0){tObj = $(this)}
 		$(this).click(function(){
@@ -104,6 +111,8 @@ $(function(){
 			}
 		});
 	});
+	
+	
 	$("input[reg1]").blur(function(){
 		var a=$(this);
 		var reg = new RegExp(a.attr("reg1"));
@@ -115,9 +124,35 @@ $(function(){
 		}else{
 			a.next("span").remove();
 			}
-		});
+	});
+	
+	
 	//实现页面规格的自动增加和删除
 	$("#button2").click(function(){
+		divNum++;
+		
+		//获得sp_0的html内容
+		var htmlDiv = $("#sp_0").html()
+		htmlDiv = "<div id='sp_" + divNum + "'>" + htmlDiv + "</div>";
+		htmlDiv = htmlDiv.replace(/specradio1/g, "specradio" + divNum);
+		htmlDiv = htmlDiv.replace(/#sp_0/g, "#sp_" + divNum);
+		
+		htmlDiv = htmlDiv.replace(/skuType1/g,"skuType"+divNum);
+		htmlDiv = htmlDiv.replace(/marketPrice1/g,"marketPrice"+divNum);
+		htmlDiv = htmlDiv.replace(/skuPrice1/g,"skuPrice"+divNum);
+		htmlDiv = htmlDiv.replace(/stockInventory1/g,"stockInventory"+divNum);
+		htmlDiv = htmlDiv.replace(/skuUpperLimit1/g,"skuUpperLimit"+divNum);
+		htmlDiv = htmlDiv.replace(/location1/g,"location"+divNum);
+		htmlDiv = htmlDiv.replace(/sku1/g,"sku"+divNum);
+		htmlDiv = htmlDiv.replace(/sort1/g,"sort"+divNum);
+		htmlDiv = htmlDiv.replace(/showStatus1/g,"showStatus"+divNum);
+		
+		$("#divNum").val(divNum);
+		alert(htmlDiv);
+		$(".page_c").before(htmlDiv);
+	});
+	
+	/* $("#button2").click(function(){
 		//alert(divNum);
 		var d=(++divNum);
 		var a=$(".sp_0:first").html();
@@ -132,12 +167,14 @@ $(function(){
 		a = a.replace(/sku1/g,"sku"+d);
 		a = a.replace(/sort1/g,"sort"+d);
 		a = a.replace(/showStatus1/g,"showStatus"+d);
-		alert(a);
+		//alert(a);
 		var b=a.replace(/clickRemove\('#sp\_\d+'\)/g,"clickRemove('#sp_"+d+"')");
 		
 		$("#button2").parent().parent().before("<div class='sp_0' id='sp_"+d+"'>"+b+"</div>");
 		$("#divNum").val(d);
-		});
+	}); */
+	
+	
 
 	$("#showStatus3").click(function(){
 			var a=$("#auditStatus1").attr("checked");
@@ -145,19 +182,29 @@ $(function(){
 				alert("必须得审核通过后，才能上架");
 				$("#showStatus4").attr("checked",true);
 			}
-		});
+	});
+	
+	
+	
     $("#auditStatus0").click(function(){
     	$("#showStatus4").attr("checked",true);
     	$("#showStatus1").attr("value","1");
-        });
+     });
+    
+    
     $("#auditStatus2").click(function(){
     	$("#showStatus4").attr("checked",true);
     	$("#showStatus1").attr("value","1");
     });
+    
+    
     $("#showStatus4").click(function(){
     	 $("#showStatus1").attr("value","1");
-        });
+    });
 });
+
+
+//===================================================================================
 
 //商品规格的redio选中与取消
 $(".sp_0").find("input[type=radio]").live("dblclick",function(){
@@ -167,6 +214,8 @@ $(".sp_0").find("input[type=radio]").live("dblclick",function(){
 		$(this).attr('checked','checked');
 	}
 });
+
+
 
 function changePri(obj){
 	var reg0=/^[0-9]{1,7}\.{0,1}[0-9]*$/;
@@ -193,7 +242,16 @@ function changePri(obj){
 		obj.value=firstSub+'.'+lastSub;
 	}
 }
-function clickRemove(id){
+
+function clickRemove(id) {
+	if(id == "#sp_0"){
+		alert("默认的最小销售单元不能删除！");
+		return;
+	}
+	$(id).remove();
+}
+
+/* function clickRemove(id){
 	var b=$(id+" #showStatus1").val();
 	var a=$(".sp_0").length;
 	if(a == 1){
@@ -205,28 +263,28 @@ function clickRemove(id){
     return;
 	}
 	$(id).remove();
-}
+} */
 
 
 
-	function submitUpload(){
-		var option = {
-				url:"${path}/upload/uploadPic.do",//如果不指定url那么就使用使用提交表单的url，如果指定就使用当前的url
-				dataType:"text",
-				success:function(responseText){
-					var jsonObj = $.parseJSON(responseText);
-					$("#imgsImgSrc").attr("src", jsonObj.realPath);
-					$("#imgs").val(jsonObj.relativePath);
-					
-				},
-				error:function(){
-					alert("系统错误");
-				}
+
+function submitUpload(){
+	var option = {
+			url:"${path}/upload/uploadPic.do",//如果不指定url那么就使用使用提交表单的url，如果指定就使用当前的url
+			dataType:"text",
+			success:function(responseText){
+				var jsonObj = $.parseJSON(responseText);
+				$("#imgsImgSrc").attr("src", jsonObj.realPath);
+				$("#imgs").val(jsonObj.relativePath);
 				
-		};
-		$("#myForm").ajaxSubmit(option);
-		
-	}
+			},
+			error:function(){
+				alert("系统错误");
+			}
+			
+	};
+	$("#myForm").ajaxSubmit(option);
+}
 
 </script>
 </head>

@@ -9,6 +9,10 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="com/fuyi/ecps/sqlMap/EbBrandMapper.xml" />
 		<mapper resource="com/fuyi/ecps/sqlMap/EbItemMapper.xml"/>
 		<mapper resource="com/fuyi/ecps/sqlMap/EbFeatureMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/EbItemClobMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/EbParaValueMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/EbSkuMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/EbSpecValueMapper.xml"/>
 	</mappers>
 
 </configuration>

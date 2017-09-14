@@ -22,6 +22,10 @@ public class EbItemDaoImpl extends SqlSessionDaoSupport implements EbItemDao {
 		return this.getSqlSession().selectOne(ns + "selectItemListByConditionCount", qc);
 	}
 
+	public void saveItem(EbItem item) {
+		this.getSqlSession().insert(ns + "insert", item);
+	}
+
 	
 
 }
