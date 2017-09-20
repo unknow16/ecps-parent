@@ -8,6 +8,7 @@
 <script type="text/javascript" src="<c:url value='/${system}/res/js/jquery.tablesorter.js'/>"></script>
 <script type="text/javascript">
 $(function(){
+	
 	var showStatus = $("#showStatus").val();
 	if(showStatus == '0'){
 		$("#label5").attr("class", "here");
@@ -30,6 +31,8 @@ $(function(){
         <a href="javascript:void(0);" id="next" class="hidden" title="下一页">下一页</a>
     </span>
 </div> */
+
+
 	//获得当前页面和总页数
 	var pageNo = parseInt($("#currentPageNo").val());
 	var totalPage = parseInt($("#totalPage").val());
@@ -143,7 +146,7 @@ $(function(){
 			<tr>
 				<td>${item.itemNo }</td>
                 <td >${item.itemName }</td>
-                <td><img alt="" src="" width="50" height="50"></td>
+                <td><img alt="" src="${file_path }${item.imgs}" width="50" height="50"></td>
 				
 				<td>
 					<c:if test="${item.isNew == 1 }"><span class="is" ></span></c:if>

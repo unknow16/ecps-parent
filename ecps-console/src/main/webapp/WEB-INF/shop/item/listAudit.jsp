@@ -11,14 +11,64 @@
 
 
 	$(function(){
-		//获得总记录数
+
+		//获得当前页面和总页数
+		var pageNo = parseInt($("#currentPageNo").val());
+		var totalPage = parseInt($("#totalPage").val());
+		
+		if(pageNo == 1 && pageNo == totalPage){
+			$("#previous").hide();
+			$("#next").hide();
+		}else if(pageNo == 1 && pageNo < totalPage){
+			$("#previous").hide();
+			$("#next").show();
+		}else if(pageNo > 1 && pageNo < totalPage){
+			$("#previous").show();
+			$("#next").show();
+		}else if(pageNo > 1 && pageNo == totalPage){
+			$("#previous").show();
+			$("#next").hide();
+		}
+		
+		$("#next").click(function(){
+			pageNo++;
+			$("#pageNo").val(pageNo);
+			$("#form1").submit();
+		});
+		$("#previous").click(function(){
+			pageNo--;
+			$("#pageNo").val(pageNo);
+			$("#form1").submit();
+		});
+		$("#firstPage").click(function(){
+			
+			$("#pageNo").val(1);
+			$("#form1").submit();
+		});
+		$("#lastPage").click(function(){
+			
+			$("#pageNo").val(totalPage);
+			$("#form1").submit();
+		});
+		
+		$("#selectPage").change(function(){
+			var page = $(this).val();
+			$("#pageNo").val(page);
+			$("#form1").submit();
+		});
+		
+		$("#selectPage").val(pageNo);
+		
+		
+		
+		/* //获得总记录数
     	var totalCount = parseInt($("#totalCount").val());
     	//获得当前页
     	var currentPageNo = parseInt($("#currentPageNo").val());
     	//总页数
-    	var totalPage = parseInt($("#totalPage").val());
+    	var totalPage = parseInt($("#totalPage").val()); */
     	
-    	/* <span class="r page">
+    	<%-- <span class="r page">
         <input type="hidden" value="${pageNo}" id="pageNo" name="pageNo" />
         <input type="hidden" value="${page.totalCount}" id="totalCount" name="totalCount" />
         <input type="hidden" value="${page.pageNo}" id="currentPageNo" name="currentPageNo" />
@@ -26,9 +76,9 @@
                 共<var id="pagePiece" class="orange">0</var>条<var id="pageTotal">1/1</var>
         <a href="javascript:void(0);" id="previous"  title="上一页">上一页</a>
         <a href="javascript:void(0);" id="next"  title="下一页">下一页</a>
-    </span> */
+    </span> --%>
     	
-    	//设置总记录数
+    	/* //设置总记录数
     	$("#pagePiece").html(totalCount);
     	//设置当前页和总页数
     	
@@ -80,14 +130,14 @@
     		if(confirm("确认要不通过吗？")){
     			window.location.href = "${path}/item/updateStatus.do?itemId="+itemId+"&auditStatus=2"
     		}
-    	});
+    	}); */
     	
     	
     	
 	});
 
-    $(document).ready(function(){
-    	var obj=null;
+	/* $(document).ready(function(){
+    	 var obj=null;
     	$("a[group]").click(function(){
     		$("#errorInfoAdd").html("<label>&nbsp;</label>");
 		    $("#itemNote").val("");
@@ -185,7 +235,11 @@
             alert("删除失败！");
         }
 
-    }
+    } */
+    
+    
+    
+    //上下架状态回显
     $(document).ready(function(){
         if($("#auditStatus").val()=='0'){
             $("#label1") .attr("class","here");
@@ -197,7 +251,7 @@
             $("#label3") .attr("class","here");
         }
         else $("#label4") .attr("class","here");
-    })
+    });
 
 </script>
 </head>
@@ -212,291 +266,106 @@
     <div class="loc icon"><samp class="t12"><</samp>当前位置：商品管理&nbsp;&raquo;&nbsp;<span class="gray" title="商品审核">商品审核</span></div>
 
     <h2 class="h2_ch"><span id="tabs" class="l">
-        <a id="label4" href="${base}/item/listAudit.do"   title="全部实体商品" class="nor">全部</a>
-        <a id="label1" href="${path}/item/queryItemByConditionForAudit.do?auditStatus=0&showStatus=1" title="待审核实体商品" class="nor">待审核</a>
-        <a id="label2" href="${path}/item/queryItemByConditionForAudit.do?auditStatus=2&showStatus=1"  title="审核不通过实体商品" class="nor">审核不通过</a>
-        <a id="label3" href="${path}/item/queryItemByConditionForAudit.do?auditStatus=1&showStatus=1"   title="已审核实体商品" class="nor">已审核</a>
+        <a id="label4" href="${path}/item/listAudit.do?showStatus=1"   title="全部实体商品" class="nor">全部</a>
+        <a id="label1" href="${path}/item/listAudit.do?auditStatus=0&showStatus=1" title="待审核实体商品" class="nor">待审核</a>
+        <a id="label2" href="${path}/item/listAudit.do?auditStatus=2&showStatus=1"  title="审核不通过实体商品" class="nor">审核不通过</a>
+        <a id="label3" href="${path}/item/listAudit.do?auditStatus=1&showStatus=1"   title="已审核实体商品" class="nor">已审核</a>
     </span></h2>
 
-<form id="form1" name="form1" action="${base}/item/listAudit.do" method="post">
-    <input type="hidden" id="deleteAction" name="deleteAction" value="${base}/item/deleteItem.do" />
-    <input type="hidden" id="deleteCheckAction" name="deleteCheckAction" value="${base}/item/deleteCheck.do" />
-    <input type="hidden" id="auditStatus" name="auditStatus" value="${auditStatus}" />
-    <input type="hidden" id="showStatus" name="showStatus" value="${showStatus}" />
+<form id="form1" name="form1" action="${path}/item/listItem.do" method="post">
+   <input id="auditStatus" type="hidden" name="auditStatus" value="${qc.auditStatus }">
     <div class="sch">
-        <input type="hidden" id="userSearch" name="userSearch" />
-        <p>查询：
-        <ui:select name="catID" list="catList" rootId="0" defaulttext="所有分类" defaultvalue="" currentValue="${catID}"/>
-        <select id="brandId" name="brandId" value="${brandId}">
-            <option value="">全部品牌</option>
-            <c:forEach items='${brandList}' var="brand">
-                <option value="${brand.brandId}"<c:if test='${brandId==brand.brandId}'> selected </c:if>>${brand.brandName}</option>
+        <p>搜索：
+        <select id="brandId" name="brandId">
+        	<option value="">请选择品牌</option>
+            <c:forEach items="${brandList }" var="brand">
+            	<option value="${brand.brandId }" <c:if test="${qc.brandId == brand.brandId }">selected</c:if> >${brand.brandName }</option>
             </c:forEach>
-        </select><select  id="stock" name="stock" style="display:none;">
-            <option value="-1" selected="">全部库存</option>
-            <option value="0"<c:if test='${stock==0}'> selected</c:if>>已缺货</option>
-            <option value="1"<c:if test='${stock==1}'> selected</c:if>>即将缺货</option>
-        </select><input type="text" id="searchText" name="searchText" value="${userSearch}" title="请输入商品编号或商品名称" class="text20 medium gray" /><input type="submit" id="goSearch" class="hand btn60x20" value="查询" />
+        </select>
+        <select id="auditStatus" name="auditStatus" >
+        	<option value="" selected>全部审核状态</option>
+        	<option value="0" <c:if test="${qc.auditStatus == 0 }">selected</c:if> >待审核</option>
+        	<option value="1" <c:if test="${qc.auditStatus == 1 }">selected</c:if>>通过</option>
+        	<option value="2" <c:if test="${qc.auditStatus == 2 }">selected</c:if>>不通过</option>
+        </select>
+        <input type="text" id="searchText" value="${qc.itemName }" name="itemName" title="请输入商品名称" class="text20 medium gray" />
+        <input type="submit" id="goSearch" class="hand btn60x20" value="查询" />
     </p></div>
 
+    <div class="page_c">
+        <span class="l">
+        </span>
+        <span class="r inb_a">
+            <a href="${path}/item/toAddItem.do" class="btn80x20" title="添加商品">添加商品</a>
+        </span>
+    </div>
 
 	<table cellspacing="0" summary="" class="tab" id="myTable">
 		<thead>
-			<th>商品编号</th>
-            <th class="wp">商品名称</th>
-            <th>图片</th>
-			<th>新品</th>
-			<th>推荐</th>
-			<th>特价</th>
-            <th>上下架</th>
-            <th>审核状态</th>
-			<th>操作</th>
+			<tr>
+				<th>商品编号</th>
+	            <th class="wp">商品名称</th>
+	            <th>图片</th>
+				<th>新品</th>
+				<th>推荐</th>
+				<th>特价</th>
+	            <th>上下架</th>
+	            <th>审核状态</th>
+				<th>操作</th>
+			</tr>
 		</thead>
 		<tbody>
+		<c:forEach items="${page.list }" var="item">
 			<tr>
-				<td>00000</td>
-                <td >诺基亚</td>
-                <td><img alt="" src="http://localhost:8081/pic/upload//upload/ecps/resource/137845734695207145028.jpg" width="50" height="50"></td>
+				<td>${item.itemNo }</td>
+                <td >${item.itemName }</td>
+                <td><img alt="" src="${file_path }${item.imgs}" width="50" height="50"></td>
 				
 				<td>
-					
+					<c:if test="${item.isNew == 1 }"><span class="is" ></span></c:if>
+					<c:if test="${item.isNew == 0 }"><span class="not" ></span></c:if>
+				</td>
+				<td>
+					<c:if test="${item.isGood == 1 }"><span class="is" ></span></c:if>
+					<c:if test="${item.isGood == 0 }"><span class="not" ></span></c:if>
 					
 				</td>
 				<td>
-					
-					
-					
-				</td>
-				<td>
-					
-					
+					<c:if test="${item.isHot == 1 }"><span class="is" ></span></c:if>
+					<c:if test="${item.isHot == 0 }"><span class="not" ></span></c:if>
 					
 				</td>
                 <td>
-                	<span class="not" ></span>
-					
+                	<c:if test="${item.showStatus == 0 }"><span class="is" ></span></c:if>
+					<c:if test="${item.showStatus == 1 }"><span class="not" ></span></c:if>
 					
                 </td>
                 <td>
                 	
-					
-					
-					待审核
+					<c:if test="${item.auditStatus == 0 }">待审核</c:if>
+					<c:if test="${item.auditStatus == 1 }">通过</c:if>
+					<c:if test="${item.auditStatus == 2 }">不通过</c:if>
 					
                 </td>
                
 				<td>
-					
-					
-					
-						<a href="#"title="查看">查看</a>
-				  			<a href="#" pass="yes" itemId="3166">通过</a>
-				  			<a href="#" nopass="no" itemId="3166">不通过</a>
-					
-							
+							<a href="/ecps-console/shop/item/viewItem.jsp" title="查看">查看</a>
+					  	
+					  		
+					  		<c:if test="${item.auditStatus == 2 }">
+					  			<a href="/ecps-console/ecps/console/item/editItem.do?type=1&itemId=2384">编辑</a>
+					  		</c:if>
+					  		<c:if test="${item.auditStatus == 0 }">
+					  			<a href="javascript:void(0);">通过</a>
+					  			<a href="javascript:void(0);">不通过</a>
+					  		</c:if>
 					  		
 					  		
 					  			
 					  			
 				</td>
 			</tr>
-			
-			
-			<tr>
-				<td>00000</td>
-                <td >gggg</td>
-                <td><img alt="" src="http://localhost:8081/pic/upload//upload/ecps/resource/137845627095775028160.jpg" width="50" height="50"></td>
-				
-				<td>
-					<span class="is" ></span>
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-                <td>
-                	<span class="not" ></span>
-					
-					
-                </td>
-                <td>
-                	
-					
-					
-					待审核
-					
-                </td>
-               
-				<td>
-					
-					
-					
-						<a href="#"title="查看">查看</a>
-				  			<a href="#" pass="yes" itemId="3165">通过</a>
-				  			<a href="#" nopass="no" itemId="3165">不通过</a>
-					
-							
-					  		
-					  		
-					  			
-					  			
-				</td>
-			</tr>
-			
-			
-			<tr>
-				<td>00000</td>
-                <td >fff</td>
-                <td><img alt="" src="http://localhost:8081/pic/upload//upload/ecps/resource/137845607980976917261.jpg" width="50" height="50"></td>
-				
-				<td>
-					<span class="is" ></span>
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-                <td>
-                	<span class="not" ></span>
-					
-					
-                </td>
-                <td>
-                	
-					
-					
-					待审核
-					
-                </td>
-               
-				<td>
-					
-					
-					
-						<a href="#"title="查看">查看</a>
-				  			<a href="#" pass="yes" itemId="3164">通过</a>
-				  			<a href="#" nopass="no" itemId="3164">不通过</a>
-					
-							
-					  		
-					  		
-					  			
-					  			
-				</td>
-			</tr>
-			
-			
-			<tr>
-				<td>00000</td>
-                <td >iphone</td>
-                <td><img alt="" src="http://localhost:8081/pic/upload//upload/ecps/resource/137845597721969962721.jpg" width="50" height="50"></td>
-				
-				<td>
-					<span class="is" ></span>
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-                <td>
-                	<span class="not" ></span>
-					
-					
-                </td>
-                <td>
-                	
-					
-					
-					待审核
-					
-                </td>
-               
-				<td>
-					
-					
-					
-						<a href="#"title="查看">查看</a>
-				  			<a href="#" pass="yes" itemId="3163">通过</a>
-				  			<a href="#" nopass="no" itemId="3163">不通过</a>
-					
-							
-					  		
-					  		
-					  			
-					  			
-				</td>
-			</tr>
-			
-			
-			<tr>
-				<td>1 0003101</td>
-                <td >galax S3</td>
-                <td><img alt="" src="http://localhost:8081/pic/upload//upload/ecps/resource/137809208432022454146.jpg" width="50" height="50"></td>
-				
-				<td>
-					<span class="is" ></span>
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-				<td>
-					
-					
-					
-				</td>
-                <td>
-                	<span class="not" ></span>
-					
-					
-                </td>
-                <td>
-                	
-					
-					
-					待审核
-					
-                </td>
-               
-				<td>
-					
-					
-					
-						<a href="#"title="查看">查看</a>
-				  			<a href="#" pass="yes" itemId="3121">通过</a>
-				  			<a href="#" nopass="no" itemId="3121">不通过</a>
-					
-							
-					  		
-					  		
-					  			
-					  			
-				</td>
-			</tr>
-
+		</c:forEach>
 		
 		
 			
@@ -520,15 +389,23 @@
         <span class="l inb_a">
         </span>
         <span class="r page">
-            <input type="hidden" value="${pageNo}" id="pageNo" name="pageNo" />
+            <input type="hidden" id="pageNo" name="pageNo" />
             <input type="hidden" value="${page.totalCount}" id="totalCount" name="totalCount" />
             <input type="hidden" value="${page.pageNo}" id="currentPageNo" name="currentPageNo" />
-            <input type="hidden" value="${page.pageNum}" id="totalPage" name="totalPage" />
-                    共<var id="pagePiece" class="orange">0</var>条<var id="pageTotal">1/1</var>
-            <a href="javascript:void(0);" id="previous"  title="上一页">上一页</a>
-            <a href="javascript:void(0);" id="next"  title="下一页">下一页</a>
+            <input type="hidden" value="${page.totalPage}" id="totalPage" name="totalPage" />
+                    共<var id="pagePiece" class="orange">${page.totalCount }</var>条<var id="pageTotal">${page.pageNo }/${page.totalPage }</var>
+            <a href="javascript:void(0);" id="firstPage"  >首页</a>
+            <a href="javascript:void(0);" id="previous" class="hidden" title="上一页">上一页</a>
+            <a href="javascript:void(0);" id="next" class="hidden" title="下一页">下一页</a>
+            <select id="selectPage">
+            	<c:forEach begin="1" end="${page.totalPage }" var="myPage">
+            		<option value="${myPage }">第${myPage }页</option>
+            	</c:forEach>
+            </select>
+            <a href="javascript:void(0);" id="lastPage"  >尾页</a>
         </span>
     </div>
 </form>
+
 </div></div>
  </body>

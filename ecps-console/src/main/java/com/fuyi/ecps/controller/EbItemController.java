@@ -167,7 +167,21 @@ public class EbItemController {
 			}
 		}
 		
-		
+		itemService.saveItem(item, itemClob, paraValueList, skuList);
 		return "redirect:listItem.do";
+	}
+	
+	@RequestMapping("/listAudit.do")
+	public String listAudit(QueryCondition qc, Model model) {
+		if(qc.getPageNo() == null) {
+			qc.setPageNo(1);
+		}
+		Page page = itemService.selectItemByCondition(qc);
+		List<EbBrand> brandList = brandService.selectBrand();
+		
+		model.addAttribute("qc", qc);
+		model.addAttribute("page", page);
+		model.addAttribute("brandList", brandList);
+		return "item/listAudit";
 	}
 }

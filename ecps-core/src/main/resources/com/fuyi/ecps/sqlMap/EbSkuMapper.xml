@@ -43,6 +43,9 @@
     where SKU_ID = #{skuId,jdbcType=DECIMAL}
   </delete>
   <insert id="insert" parameterType="com.fuyi.ecps.model.EbSku" >
+  <selectKey keyProperty="skuId" order="BEFORE" resultType="long">
+  	select seqskuid.nextval from dual
+  </selectKey>
     insert into EB_SKU (SKU_ID, ITEM_ID, SKU, 
       SKU_PRICE, SHOW_STATUS, STOCK_INVENTORY, 
       SKU_UPPER_LIMIT, LOCATION, SKU_IMG, 
