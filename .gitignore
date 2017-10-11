@@ -1,6 +1,11 @@
+.settings/
+.project
+.classpath
+
+
+
 # Compiled class file
 *.class
-.settings/
 
 # Log file
 *.log

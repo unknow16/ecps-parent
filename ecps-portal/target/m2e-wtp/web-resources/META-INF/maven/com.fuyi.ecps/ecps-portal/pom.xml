@@ -16,11 +16,11 @@
 	</parent>
 
 	<dependencies>
-<!-- 		<dependency>
-			<groupId>com.rl.ecps</groupId>
+		<dependency>
+			<groupId>com.fuyi.ecps</groupId>
 			<artifactId>ecps-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency> -->
+		</dependency>
 		<dependency>
 			<groupId>${jdbc.groupId}</groupId>
 			<artifactId>${jdbc.artifactId}</artifactId>

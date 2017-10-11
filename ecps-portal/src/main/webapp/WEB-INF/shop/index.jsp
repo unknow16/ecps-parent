@@ -1,26 +1,38 @@
-<!DOCTYPE html>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ include file="taglibs.jsp" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
 <html>
 <head>
-<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">    
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="This is my page">
 <meta name="author" content="http://www.asiainfo-linkage.com/" />
 <meta name="copyright" content="asiainfo-linkage.com 版权所有，未经授权禁止链接、复制或建立镜像。" />
 <meta name="description" content="中国移动通信 name.com"/>
 <meta name="keywords" content="中国移动通信 name.com"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+
 <title>手机商城_移动商城_中国移动通信</title>
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
-<link rel="stylesheet" href="../res/css/blue.css" />
+<link rel="stylesheet" href="../res/css/style.css" />
 <script src="../res/js/jquery.js"></script>
 <script src="../res/js/com.js"></script>
 <script type="text/javascript">
 $(function(){
 
 	$("#loginAlertIs").click(function(){
-		tipShow('#loginAlert');
+		//tipShow('#loginAlert');
+		window.location.href = "${path}/user/toLogin.do";
 	});
 
 	$("#promptAlertIs").click(function(){
@@ -31,28 +43,126 @@ $(function(){
 		tipShow('#transitAlert');
 	});
 
-	$(window).scroll(function(){
-        var topH = $(document).scrollTop();
-        if(topH > 368){
-            $('.backTop').fadeIn('slow');
-        }else{
-            $('.backTop').fadeOut('slow');
+	/*filter condition*/
+	$('.btn80x22').toggle(
+        function () {
+            $(this).attr('title','收缩↑');
+            $(this).attr('class','btn80x22 close');
+            var len = $('.filter li').length;
+            $('.filter li').slice(6,len-2).show();
+        },
+        function () {
+            $(this).attr('title','展开↓');
+            $(this).attr('class','btn80x22 open');
+            var len = $('.filter li').length;
+            $('.filter li').slice(7,len-2).hide();
         }
+    );
+
+	$('.filter li a').mousedown(function(){
+    	var cln = $(this).attr("class");
+		if(cln == undefined){
+			$(this).attr("class",'');
+			cln = $(this).attr("class");
+		};
+		if(cln.indexOf("btn80x22") == 0){
+			return;
+		}
+		var type = $(this).parent().is("p");
+		var obj;
+		if(type){
+			obj = $(this).parent().find('a');
+		}else{
+			obj = $(this).parent().parent().find('a');
+		}
+		obj.removeClass('here');
+		$(this).addClass('here');
+		
+		
+		//***********************************fuyi*****************
+		var price = "";
+		var brandId = "";
+		var paraStr = "";
+		$(".filter li a").each(function() {
+			var clazz = $(this).attr("class");
+			if(clazz == "here"){
+				//alert($(this).html());
+				var fType = $(this).attr("fType");
+				var title = $(this).attr("title");
+				if(fType == "price") {
+					price = title;
+				} else if(fType == "brand") {
+					brandId = title;
+				} else if(fType == "feature") {
+					paraStr = paraStr + title + ",";
+				}
+			}
+		});
+		
+		//alert(price + "***" + brandId + "****" + paraStr);
+		
+		var iframePath = "${path }/item/listItem.do?price=" + price + "&brandId=" + brandId + "&paraStr=" + paraStr;
+		//alert(iframePath);
+		$("#itemListIframe").attr("src", iframePath);
+		
     });
 
-	$('.left_nav3').each(function(i, items_list){
-		$(items_list).find('dt').click(function(){
-			if($(this).hasClass('close'))
-				$(this).removeClass('close');					
-			else $(this).addClass('close');
-			$(this).parent().find('dd').toggle();
+	$("#filterRest").click(function(){
+		$('.filter li a').each(function(){
+			$(this).removeClass('here');
+		});
+		$('.filter li').each(function(){
+			$(this).find('a').eq(0).addClass('here');
 		});
 	});
+
+	/* sales sales_down sales_up price price_down price_up time time_down time_up */
+	$('.sort_type a').each(function(i, obj){
+		$(obj).click(function(){
+			var name = $(this).attr('class');
+			$('.sort_type a').each(function(j, li){
+				var tname = $(li).attr('class');
+				if(j == 0&&tname!='sales'){$(li).attr('class','sales');}
+				if(j == 1&&tname!='price'){$(li).attr('class','price');}
+				if(j == 2&&tname!='time'){$(li).attr('class','time');}
+			});
+			if(name.indexOf('sales')>=0){
+				if(name == 'sales'||name == 'sales_up'){
+					$(this).attr('class','sales_down');
+					$(this).attr('title','销量从高到低排序');
+				}
+				if(name == 'sales_down'){
+					$(this).attr('class','sales_up');
+					$(this).attr('title','销量从低到高排序');
+				}
+			};
+			if(name.indexOf('price')>=0){
+				if(name == 'price'||name == 'price_up'){
+					$(this).attr('class','price_down');
+					$(this).attr('title','点击按价格从高到低排序');
+				}
+				if(name == 'price_down'){
+					$(this).attr('class','price_up');
+					$(this).attr('title','点击按价格从低到高排序');
+				}
+			};
+			if(name.indexOf('time')>=0){
+				if(name == 'time'||name == 'time_up'){
+					$(this).attr('class','time_down');
+					$(this).attr('title','上架时间从近到远排序');
+				}
+				if(name == 'time_down'){
+					$(this).attr('class','time_up');
+					$(this).attr('title','上架时间从远到近排序');
+				}
+			};
+		});
+	});
+	
 });
 </script>
 </head>
 <body>
-<a id="pageTop" name="pageTop"></a>
 <div id="tipAlert" class="w tips">
 	<p class="l">本网站将于4月11日12:00进行系统维护，维护期间，本站将暂停业务办理等相关业务，敬请见谅。</p>
 	<p class="r"><a href="javascript:void(0);" title="关闭" onclick="$('#tipAlert').hide();"></a></p>
@@ -126,7 +236,8 @@ $(function(){
 		<li class="clr"><a href="http://www.chinamobileltd.com" title="chinamobileltd">chinamobileltd</a></li>
 		<li class="clr"><a href="http://www.cmdi.10086.cn" title="中国移动设计院">中国移动设计院</a></li>
 		<li class="clr"><a href="http://labs.10086.cn" title="中国移动研究院">中国移动研究院</a></li>
-		</ul></li>-->
+		</ul>-->
+	</li>
 	</ul>
 </div></div>
 
@@ -269,7 +380,7 @@ $(function(){
 
 <div class="w loc">
 	
-	<p class="l"><a href="#" title="商城首页">商城首页</a><samp>|</samp><a href="#" title="我的商城">我的商城</a></p>
+	<p class="l"><a href="#" title="商城首页">商城首页</a><samp>|</samp><a href="./person/index.jsp" title="我的商城">我的商城</a></p>
 
 	<dl id="cart" class="cart l">
 		<dt><a href="#" title="结算">结算</a>购物车:<b id="">123</b>件</dt>
@@ -317,324 +428,236 @@ $(function(){
 		</dd>
 	</dl>
 
-	<p class="r"><a href="index.html" title="商城首页">商城首页</a><samp>&gt;</samp><span class="gray">帮助中心</span></p>
+	<p class="r"><a href="index.html" title="商城首页">商城首页</a><samp>&gt;</samp><span class="gray">手机商城</span></p>
 
 </div>
 
 <div class="w ofc mt">
 	<div class="l wl">
-		<h2 class="h2 h2_l"><em title="帮助中心"><i class="icon20x20 ico12"></i>帮助中心</em><cite></cite></h2>
-		<div class="box bg_white">
-			<dl class="left_nav3">
-				<dt class="mt-1"><s></s>购机指南</dt>
-				<dd><a href="#h101" title="买家必读"><samp>▪</samp>买家必读</a></dd>
-				<dd><a href="#h102" title="购物流程"><samp>▪</samp>购物流程</a></dd>
-				<dd><a href="#h103" title="在线购机流程"><samp>▪</samp>在线购机流程</a></dd>
-				<dd><a href="#h104" title="预约购机流程"><samp>▪</samp>预约购机流程</a></dd>				
-				<dd><a href="#h105" title="预约选号流程"><samp>▪</samp>预约选号流程</a></dd>
-			</dl>
-			<dl class="left_nav3">
-				<dt><s></s>支付方式</dt>
-				<dd><a href="#h201" title="网上支付"><samp>▪</samp>网上支付</a></dd>
-			</dl>
-			<dl class="left_nav3">
-				<dt><s></s>配送说明</dt>
-				<dd><a href="#h301" title="配送说明"><samp>▪</samp>配送说明</a></dd>
-				<dd><a href="#h302" title="货品签收"><samp>▪</samp>货品签收</a></dd>
-			</dl>
-			<dl class="left_nav3">
-				<dt><s></s>售后服务</dt>
-				<dd><a href="#h401" title="保修说明"><samp>▪</samp>保修说明</a></dd>
-				<dd><a href="#h402" title="退换货政策"><samp>▪</samp>退换货政策</a></dd>
-				<dd><a href="#h403" title="退换货流程"><samp>▪</samp>退换货流程</a></dd>
-				<dd><a href="#h404" title="售后服务点"><samp>▪</samp>售后服务点</a></dd>
-			</dl>
-			<dl class="left_nav3">
-				<dt><s></s>常见问题</dt>
-				<dd class=" mb-1"><a href="#h5" title="常见问题"><samp>▪</samp>常见问题</a></dd>				
-			</dl>
+		
+		<h2 class="h2 h2_l"><em title="商品分类">商品分类</em><cite></cite></h2>
+		<div class="box bg_gray">
+			<ul class="ul left_nav">
+				<li><a href="#" title="网上选号"><img src="../res/img/gray/ln01.gif" alt="网上选号" />网上选号</a></li>
+				<li><a href="#" title="手机商城"><img src="../res/img/gray/ln02.gif" alt="手机商城" />手机商城</a></li>
+				<li><a href="#" title="优惠活动"><img src="../res/img/gray/ln03.gif" alt="优惠活动" />优惠活动</a></li>
+			</ul>
 		</div>
+
+		<h2 class="h2 h2_l mt"><em title="销量排行榜">销量排行榜</em><cite></cite></h2>
+		<div class="box bg_white">
+			<ul class="uls x_50x50">
+				<li>
+					<var class="sfont">1</var>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<!-- dt 8个文字+... -->
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉摩托罗拉拉...</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<var class="sfont">2</var>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<var class="sfont">3</var>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+
+		<h2 class="h2 h2_l mt"><em title="我的浏览记录">我的浏览记录</em><cite></cite></h2>
+		<div class="box bg_white">
+			<ul class="uls x_50x50">
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<!-- dt 8个文字+... -->
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉摩托罗拉拉...</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+				<li>
+					<a href="#" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="#" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+
+		<div class="ad200x75 mt"><img src="../res/img/pic/ad200x75.jpg" alt="" /></div>
+
+		<div class="ad200x169 mt"><img src="../res/img/pic/ad200x169.jpg" alt="" /></div>
+
+		<div class="ad200x244 mt"><img src="../res/img/pic/ad200x244.jpg" alt="" /></div>
+
 	</div>
-	<div class="r wr help_c">
-	
-        <a name="h1"></a>
-        <h2 title="购机指南">购机指南</h2>
+	<div class="r wr">
 
-        <a name="h101"></a>
-        <h3>一、买家必读</h3>
-        <ul class="uls">
-            <li>郑重承诺：中国移动网上商城承诺本商城所售产品都是正品行货， 具有正规发票和联保单，享受厂商的全国联保服务。</li>
-        </ul>
+		<h2 class="h2 h2_r rel"><samp></samp><em title="热卖手机">&nbsp;&nbsp;&nbsp;热卖手机</em><cite><a href="#" title="更多热卖手机" class="more">更多&gt;&gt;</a></cite></h2>
+		<div class="box bg_white">
+			<ul class="uls i_150x150 x4_150x150">
+				<li>
+					<a href="./productDetail.jsp" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<!-- dt 10个文字+... -->
+						<dt><a href="/productDetail.jsp" title="摩托罗拉XT319" target="_blank">摩托罗拉摩托罗拉摩托...</a></dt>
+						<!-- dt 25个文字+... -->
+						<dd class="h40">手手机下单就返下单就返新品上市上手手机下单就就...</dd>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+						<dd><a href="./productDetail.jsp" title="购买裸机" class="inb btn70x21 mr">购买裸机</a><a href="./productDetail.jsp" title="优惠购机" class="inb btn70x21">优惠购机</a></dd>
+					</dl>
+					<img src="../res/img/pic/hot.gif" alt="热门" class="type" />
+				</li>
+				<li>
+					<a href="./productDetail.jsp" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="./productDetail.jsp" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="h40">3G手机（黑）WCDMA/GSM 新品！！</dd>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+						<dd><a href="./productDetail.jsp" title="购买裸机" class="inb btn70x21 mr">购买裸机</a><a href="./productDetail.jsp" title="优惠购机" class="inb btn70x21">优惠购机</a></dd>
+					</dl>
+				</li>
+				<li>
+					<a href="./productDetail.jsp" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="./productDetail.jsp" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="h40">3G手机（黑）WCDMA/GSM 新品上！</dd>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+						<dd><a href="./productDetail.jsp" title="购买裸机" class="inb btn70x21 mr">购买裸机</a><a href="./productDetail.jsp" title="优惠购机" class="inb btn70x21">优惠购机</a></dd>
+					</dl>
+				</li>
+				<li>
+					<a href="./productDetail.jsp" title="张同来" target="_blank" class="pic"><img src="../res/img/pic/p140X140b.png" alt="摩托罗拉XT319" /></a>
+					<dl>
+						<dt><a href="./productDetail.jsp" title="摩托罗拉XT319" target="_blank">摩托罗拉XT319</a></dt>
+						<dd class="h40">3G手机（黑）WCDMA/GSM 新品上市</dd>
+						<dd class="orange">￥3599 ~ ￥4599</dd>
+						<dd><a href="./productDetail.jsp" title="购买裸机" class="inb btn70x21 mr">购买裸机</a><a href="./productDetail.jsp" title="优惠购机" class="inb btn70x21">优惠购机</a></dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
 
-        <a name="h102"></a>
-        <h3>二、购物说明</h3>
-        <ul class="uls">
-            <li>您在成功提交订单后，如无特殊情况商城会在5个工作日为您送到货品； 如果您对购买商品有特殊要求请在订单备注中说明，以免出错给您带来不便！</li>
-            <li>手机属于电子产品，其价格有波动属于正常，您购买商品以生成订单的价格为准， 商城不因为该商品可能发生的降价而退还差价， 同样也不因为可能发生的涨价而要求买家补足差价。</li>
-            <li>色差问题：因拍照、灯光、各显示器效果不同， 您在电脑上看到的商品图可能会与您收到商品存在颜色差异，实际颜色以您收到商品为准。 请对颜色要求较为苛刻的朋友谨慎购买，色差不在退换货服务范围内。</li>
-            <li>标配说明：厂家有可能在没有任何提前通知的情况下更改产品包装或者标配， 实物配件请以商城机型页面中包装清单为准。</li>
-        </ul>
-	
-        <a name="h103"></a>
-        <h3>三、在线购机流程</h3>
-		<img src="../res/img/help/help_1.jpg"/>
-		<dl>
-			<dt>第一步：商品选购</dt>
-			<dd>（1）通过在首页输入关键字的方法来搜索您想要购买的产品。</dd>
-			<dd>（2）手机商城网站上有分类导航栏，通过该菜单也可以找到不同品牌分类的产品。</dd>
-			<dd>（3）进入商品详情页面，选择规格， 点击“加入收藏”商品会自动添加到收藏夹，也可以选择好营销套餐后，点击“立即购买”进入订单页面。</dd>
-			<dd><img src="../res/img/help/help_2.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>第二步：填写订单信息
-			<dd>对收货人信息、发票信息、订单备注等信息进行填写。</dd>
-			<dd>（1）收货人信息</dd>
-			<dd>请填写正确完整的收货人姓名、收货人联系方式、详细的收货地址和邮编， 选择配送时间以及支付方式，发票抬头等信息，否则将会影响您订单的处理和配送。</dd>
-			<dd><img src="../res/img/help/help_3.jpg"/></dd>
-			<dd>（2）配送方式</dd>
-			<dd>在快递配送范围内，统一送货上门。</dd>
-			<dd><img src="../res/img/help/help_4.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>第三步：提交订单</dt>
-			<dd>确认订单信息无误后点击“提交订单”，提交订单成功并显示订单号。可进入“我的订单”查看订单详细信息。</dd>
-		</dl>			     
-		<dl>
-			<dt>其他说明：</dt>
-			<dd>（1）取消订单：若您未付款，可进入“我的订单”关闭交易订单。</dd>
-			<dd><img src="../res/img/help/help_5.jpg"/></dd>
-			<dd>（2）查看订单状态：在“我的订单”查看订单状态，如订单状态为“已配送”即可查看物流配送单号，您可进入相应快递服务公司网站进行查询配送情况。</dd>
-		</dl>
+		<h2 class="h2 h2_filter mt"><em title="手机商品筛选">手机&nbsp;-&nbsp;商品筛选</em><cite><a href="javascript:void(0);" id="filterRest" title="重置筛选条件">重置筛选条件</a></cite></h2>
+		
+			
+			<ul class="uls filter">
+				<li><label>您已选择：</label><p class="sel">
+					<a href="javascript:void(0);"><em>归属地：</em>贵阳<cite title="关闭此筛选条件">X</cite></a>
+					<a href="javascript:void(0);"><em>品牌：</em>动感地带<cite title="关闭此筛选条件">X</cite></a>
+				</p></li>
+				<li><b>活动类型：</b><p>
+					<a href="javascript:void(0);" title="不限" class="here">不限</a>
+					<a href="javascript:void(0);" title="0元购机">0元购机</a>
+					<a href="javascript:void(0);" title="优化购机">优化购机</a>
+					<a href="javascript:void(0);" title="赠送话费">赠送话费</a>
+				</p></li>
+				<li><b>价格：</b><p>
+					<a href="javascript:void(0);" fType="price" title="" class="here">不限</a>
+					<a href="javascript:void(0);" fType="price" title="1-499">1-499</a>
+					<a href="javascript:void(0);" fType="price" title="500-999">500-999</a>
+					<a href="javascript:void(0);" fType="price" title="1000-1999">1000-1999</a>
+					<a href="javascript:void(0);" fType="price" title="2000-2999">2000-2999</a>
+					<a href="javascript:void(0);" fType="price" title="3000-3999">3000-3999</a>
+					<a href="javascript:void(0);" fType="price" title="4000-4999">4000-4999</a>
+					<a href="javascript:void(0);" fType="price" title="5000-10000000">5000以上</a>
+				</p></li>
+				<li><b>操作系统：</b><p>
+					<a href="javascript:void(0);" title="不限" class="here">不限</a>
+					<a href="javascript:void(0);" title="Android">Android</a>
+					<a href="javascript:void(0);" title="IOS">IOS</a>
+					<a href="javascript:void(0);" title="Windows">Windows</a>
+					<a href="javascript:void(0);" title="Mobile">Mobile</a>
+					<a href="javascript:void(0);" title="Symbian(S60及以上)">Symbian(S60及以上)</a>
+					<a href="javascript:void(0);" title="其它智能系统">其它智能系统</a>
+					<a href="javascript:void(0);" title="非智能手机">非智能手机</a>
+				</p></li>
+				<li><b>归属地：</b><p>
+					<span><a href="javascript:void(0);" title="不限" class="here">不限</a></span>
+					<span><a href="javascript:void(0);" title="贵阳">贵阳</a></span>
+					<span><a href="javascript:void(0);" title="都匀">都匀</a></span>
+					<span><a href="javascript:void(0);" title="毕节">毕节</a></span>
+					<span><a href="javascript:void(0);" title="六盘水">六盘水</a></span>
+					<span><a href="javascript:void(0);" title="凯里">凯里</a></span>
+					<span><a href="javascript:void(0);" title="遵义">遵义</a></span>
+					<span><a href="javascript:void(0);" title="LG">兴义</a></span>
+					<span><a href="javascript:void(0);" title="铜仁">铜仁</a></span>
+					<span><a href="javascript:void(0);" title="安顺">安顺</a></span>
+				</p></li>
+				<li><b>品牌：</b><p>
+					<a href="javascript:void(0);" fType="brand" title="" class="here">不限</a>
+					<c:forEach items="${brandList }" var="brand">
+						<a href="javascript:void(0);" fType="brand" title="${brand.brandId }">${brand.brandName }</a>
+					</c:forEach>
+					
+				</p></li>
+				<li><b>商品搜索：</b><p>
+					<input type="text" class="txt_sch gray" id="" name="" onfocus="if(this.value=='请输入商品名称关键字'){this.value='';this.className='txt_sch'}" onblur="if(this.value==''){this.value='请输入商品名称关键字';this.className='txt_sch gray'}" value="请输入商品名称关键字" /><input type="submit" value="搜索" class="hand btn60x26" />
+				</p></li>
 
-		<a name="h104"></a>
-        <h3>四、预约购机流程</h3>
-		<dl><dt>第一步：选择手机。</dt></dl>		
-		<dl>
-			<dt>第二步：选择相应的营销案。</dt>
-			<dd>在营销案列表中选择要预约的营销案，点击“预约”按钮。</dd>
-			<dd><img src="../res/img/help/help_6.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>第三步：选择预约办理的营业厅。</dt>
-			<dd><img src="../res/img/help/help_7.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>第四步：输入身份证号码完成预约。</dt>
-			<dd><img src="../res/img/help/help_8.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>其他说明：</dt>
-			<dd>（1）预约单有效时间：请于预约成功提交后的48小时（含预约当天）内前往所选择的中国移动沟通100营业厅办理，逾期预约失效。</dd>
-			<dd>（2）机主本人办理，需提供机主身份证原件、复印件；他人代办，需提供机主与经办人双方身份证原件、复印件、《授权委托书》。中国移动沟通100营业厅营业员可协助复印身份证。</dd>
-		</dl>
+				<c:forEach items="${IsSelFeatureList }" var="isSelFeature">
+					<li style="display:none"><b>${isSelFeature.featureName }：</b><p>
+						<a href="javascript:void(0);" fType="feature" title="" class="here">不限</a>
+						<c:forEach items="${isSelFeature.selectValues }" var="val">
+							<a href="javascript:void(0);" fType="feature" title="${val }">${val }</a>
+						</c:forEach>
+					</p></li>
+				</c:forEach>
 
-		<a name="h105"></a>
-        <h3>五、预约选号流程</h3>
-		<dl>
-			<dt>第一步：选择号码归属地</dt>
-			<dd>归属地信息精确到市、县。选择好归属地后点击确定到下一步。</dd>
-			<dd><img src="../res/img/help/help_9.jpg"/></dd>
-		</dl>		
-		<dl>
-			<dt>第二步：筛选号码</dt>
-			<dd>中国移动提供了四种号码筛选方式，您可以根据自己的需要设置筛选条件选择自己心仪的号码。</dd>
-			<dd><img src="../res/img/help/help_10.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>第三步：填写身份证预占号码</dt>
-			<dd>填写您的18位身份证号码，填写后请核对您的信息后点击确认到下一步。</dd>
-			<dd><img src="../res/img/help/help_11.jpg"/></dd>
-		</dl>
-		<dl>
-			<dt>第四步：预约成功</dt>
-			<dd>预约成功后页面会出现可办理预约号码的营业厅地址、预约号码、号码级别。完成自助选号后，您可凭有效身份证件到归属区域沟通100营业厅办理新装开户等业务，号码预约期为 两个自然日（包括预约当天）。</dd>
-			<dd><img src="../res/img/help/help_12.jpg"/></dd>
-		</dl>
-
-        <a name="h2"></a>
-        <h2 class="mt" title="支付方式">支付方式</h2>
-
-        <a name="h201"></a>
-        <h3>网上支付</h3>
-		<dl>
-			<dt>手机支付账户</dt>
-			<dd>通过cmpay.10086.cn开通该业务后，将为您开设一个以您的手机号为唯一标识的账户。手机支付账户有足够余额时，可直接用于手机商城下订单时支付。</dd>
-		</dl>
-		<dl>
-			<dt>银行卡网银</dt>
-			<dd>您可以选择您的某张银行卡完成网支付，注意，请确认您使用的银行卡是否开通了网上银行并具备网上支付功能。</dd>
-		</dl>
-
-        <a name="h3"></a>
-        <h2 class="mt">配送说明</h2>
-
-        <a name="h301"></a>
-        <h3>一、配送说明</h3>
-		<dl>
-			<dt>物流公司</dt>
-			<dd>全区（钦州除外）默认快递服务公司为中国邮政速递。如果您的配送范围不在中国邮政速递配送范围内，请您选择在线预约，您可预约到就近中国移动沟通100营业厅办理机型业务。钦州地区快递服务公司默认为宅急送，如果您的配送范围不在宅急送配送范围内，请您选择在线预约，您可预约到就近中国移动沟通100营业厅办理机型业务</dd>
-		</dl>
-		<dl>
-			<dt>配送范围</dt>
-			<dd>您成功下订单生效次日起，市区24小时内送达，县城3个工作日内送达，乡镇7个工作日内，偏远地区配送时间稍有延长，最长不超过10个工作日。</dd>
-			<dd>注：重大节假日以商城公告为准。</dd>
-		</dl>
-		<dl>
-			<dt>配送时限</dt>
-			<dd>您可以选择您的某张银行卡完成网支付，注意，请确认您使用的银行卡是否开通了网上银行并具备网上支付功能。</dd>
-		</dl>
-		<dl>
-			<dt>配送费用</dt>
-			<dd>全广西配送范围内免费配送。</dd>
-		</dl>
-		<dl>
-			<dt>退换货运费</dt>
-			<dd>由于商品质量问题或发错货而引起的退换货，由广西移动网上商城承担商品往返运费。非质量问题的退换货，需要由您自理来回邮费，详情请查看售后服务。</dd>
-		</dl>
-
-        <a name="h302"></a>
-        <h3>二、货品签收</h3>
-		<dl>
-			<dd>物流配送人员送货上门时，请您出示本人身份证原件进行签收，核对您的身份无误后，商品将交您当场检验，确认商品无误后，请在配送单签收信息处签名确认。</dd>
-			<dt>温馨提示：</dt>
-			<dd>（1）收货时，首先请您确认外包装封装完好，无拆动痕迹，未被损坏、拆包，确认无误后再签收。</dd>
-			<dd>（2）若外包装存在破损或有拆动痕迹等问题，您可当场拒收。</dd>
-			<dd>（3）下订单时请您填写真实的、正确的资料，若物流配送人员上门配送时，发现您的资料与网站填写的信息不符，或您不愿意提供相关证件核对等情况，将视该本次订单无效，物流配送人员将无法向您交付货品。</dd>
-			<dd>（4）如物流配送人员在规定配送时限时内（配送时限请参照“配送说明”），连续两天仍无法联系您，将视本次订单无效。</dd>
-		</dl>	
-
-        <a name="h4"></a>
-        <h2 class="mt">售后服务</h2>
-
-        <a name="h401"></a>
-        <h3>一、保修说明</h3>
-        <p>您可凭保修卡与发票（或业务受理单）享受国家三包政策。</p>
-
-        <a name="h402"></a>
-        <h3>二、退换货政策</h3>
-		<ul class="uls">
-			<li>（1）自您接收商品之日起7日内（以发票日期为准），商品正常使用中出现质量问题，客户可以选择维修、换新或退货。（注：手机商品根据“三包”。）</li>		
-			<li><dl>			
-				<dt>以下情况不做退货处理：</dt>			
-				<dd>A. 任何非我公司出售的商品（序列号不符）；</dd>
-				<dd>B. 任何因非正常使用及保管导致出现问题的商品（碰撞、进液、自行拆机、维修、滥用或不正确的安装及操作，撕毁或涂改标贴、机器序号 、防伪标记）；</dd>
-				<dd>C. 商品及附件不完整或有损毁；</dd>
-				<dd>D. 商品的外包装、备件、说明书和保修单、发票任一缺失；</dd>
-				<dd>E. 兼容性问题不在退货范围内。</dd>
-			</dl></li>		
-			<li>（2）所有产品一律不适用7天内无质量问题退货。</li>
-			<li>（3）退货时，请提供对应商品发票，并保证商品的完整（包括商品的包装物、 用户手册和其它由厂家提供的所有附件）。如票据和商品中任何一项丢失或损坏，则不符合退货要求，我公司有权拒绝提供退货服务。</li>
-		</ul>
-
-        <a name="h403"></a>
-        <h3>三、退换货流程</h3>
-		<dl>
-			<dt>预约购机退换货</dt>
-			<dd>（1）商品自您收到商品之日起（以发票日期为准）7日内，如出现质量问题，请购买预约机的客户先行到售后服务点办理检测报告。如果检测报告确认属于质量问题，请		客户到购买手机的营业厅办理退换货事宜。我司将根据出具的检测报告单办理。退换货时，请您务必将商品的外包装、内带附件、保修卡、说明书、发票及检测报告单随		同商品一起退回。我们保证商品的正规进货渠道和质量，如果您对购买的商品质量表示怀疑，请提供生产厂家或官方出具的书面鉴定，我们会按照国家法律规定给予处理。</dd>
-			<dd>（2）如发生退换货情况，原办理业务时用户提供的办理证明文件（包含复印件）不予退还。</dd>
-		</dl>
-		<dl>
-			<dt>在线购机退换货</dt>
-			<dd>商品自您收到商品之日起（以发票日期为准）7日内，如出现质量问题，，请您务必将商品的外包装、内带附件、保修卡、说明书、发票随同手机到当地e100沟通营业厅办理检测，如果检测确认属于质量问题，我们将帮您办理退换货手续。</dd>
-		</dl>
-		<dl>
-			<dt>退款说明</dt>
-			<dd>若您拒收或退货，您的退款金额将根据您使用的支付方式退至您的相应账户中，即若您使用手机支付账户进行支付，退款时退至您的手机支付账户；若您直接通过网银支付，退款时将退至您的银行卡账户。您的退款金额将在确认您拒收或符合退货条件后30个工作日内退回到您的相应的支付账户中。</dd>
-		</dl>
-
-		<a name="h404"></a>
-		<h3>四、售后服务点</h3>
-		<table cellspacing="0" summary="" class="tab tab8 tabfix">
-			<tr><th width="10%">市公司</th><th width="10%">区域</th><th>服务厅</th><th>地址</th></tr>
-			<tr><td>南宁</td><td>市区</td><td>东区民族大道自营服务厅</td><td>青秀区民族大道18号移动服务厅</td></tr>
-			<tr><td>南宁</td><td>市区</td><td>东区五象自营服务厅</td><td>青秀区民族大道文德大厦一楼商铺(五象广场旁)</td></tr>
-			<tr><td>南宁</td><td>市区</td><td>西区北湖自营服务厅</td><td>西乡塘区明秀东路171-3号明湖大厦</td></tr>
-			<tr><td>南宁</td><td>市区</td><td>新阳服务厅</td><td>南宁市新阳北一路2号金巢时代一楼铺面</td></tr>
-			<tr><td>南宁</td><td>市区</td><td>南区荣宝华自营服务厅</td><td>江南区星光大道23号明利广场一楼</td></tr>
-			<tr><td>南宁</td><td>市区</td><td>邕宁蒲津自营服务厅</td><td>邕宁区蒲庙镇蒲津路132-8号</td></tr>
-			<tr><td>南宁</td><td>县城</td><td>宾阳百货大楼自营服务厅</td><td>宾阳县永武街168号</td></tr>
-			<tr><td>南宁</td><td>县城</td><td>横县城东自营服务厅</td><td>横县横州镇宝华中路111号</td></tr>
-			<tr><td>南宁</td><td>县城</td><td>武鸣灵源自营服务厅</td><td>武鸣县灵源路100号</td></tr>
-			<tr><td>南宁</td><td>县城</td><td>上林霞客自营服务厅</td><td>上林县大丰镇霞客路</td></tr>
-			<tr><td>南宁</td><td>县城</td><td>隆安国泰自营服务厅</td><td>隆安县城厢镇国泰街67号</td></tr>
-			<tr><td>南宁</td><td>县城</td><td>马山同富自营服务厅</td><td>马山县白山镇同富街70号</td></tr>
-			<tr><td>河池</td><td>县城</td><td>宜州G3体验厅</td><td>宜州市庆远镇永丰路104号</td></tr>
-			<tr><td>河池</td><td>市区</td><td>都安县屏山路移动厅</td><td>河池市都安县屏山中路83号</td></tr>
-			<tr><td>钦州</td><td>县城</td><td>灵山县江南路中国移动G3营业厅</td><td>灵山县江南路153号</td></tr>
-			<tr><td>钦州</td><td>县城</td><td>浦北解放路服务厅</td><td>浦北县小江镇解放中路</td></tr>
-			<tr><td>崇左</td><td>市区</td><td>崇左江南厅</td><td>崇左市江南路22号</td></tr>
-			<tr><td>来宾</td><td>市区</td><td>来宾东盟服务厅</td><td>兴宾区维林大道东盟国际商业广场11栋57号</td></tr>
-			<tr><td>防城港</td><td>市区</td><td>防城防北路服务厅</td><td>防城港市防城区防北路89号</td></tr>
-			<tr><td>防城港</td><td>县城</td><td>东兴北仑大道服务厅</td><td>防城港市东兴北仑大道215号</td></tr>
-			<tr><td>防城港</td><td>县城</td><td>上思团结中路服务厅</td><td>防城港市上思县思阳镇团结中路2号</td></tr>
-			<tr><td>桂林</td><td>市区</td><td>桂林G3中中服务厅</td><td>桂林市中山中路48号G3体验厅</td></tr>
-			<tr><td>桂林</td><td>市区</td><td>桂林南方服务厅</td><td>桂林市中山中路39号</td></tr>
-			<tr><td>柳州</td><td>市区</td><td>驾鹤服务厅</td><td>柳州市驾鹤路1号驾鹤服务厅</td></tr>
-			<tr><td>柳州</td><td>市区</td><td>鱼峰服务厅</td><td>柳州市鱼峰路49号移动鱼峰服务厅</td></tr>
-			<tr><td>柳州</td><td>县城</td><td>中环服务厅</td><td>柳州市公园路47号移动中环服务厅</td></tr>
-			<tr><td>柳州</td><td>县城</td><td>商贸服务厅</td><td>柳州柳江县拉堡镇柳堡路198号移动商贸服务厅</td></tr>
-			<tr><td>柳州</td><td>县城</td><td>广场服务厅</td><td>柳州鹿寨县广场路8－1号广场服务厅</td></tr>
-			<tr><td>柳州</td><td>县城</td><td>朝阳服务厅</td><td>柳州融水县朝阳东路11号移动朝阳服务厅</td></tr>
-			<tr><td>柳州</td><td>市区</td><td>柳塘服务厅</td><td>柳州柳城县柳塘路4号移动柳塘服务厅</td></tr>
-			<tr><td>柳州</td><td>县城</td><td>桂林南方服务厅</td><td>柳州融安县桔香南路移动地王服务厅</td></tr>
-			<tr><td>柳州</td><td>县城</td><td>桂林南方服务厅</td><td>柳州三江县古宜镇桥西南5号移动桥头服务厅</td></tr>
-			<tr><td>玉林</td><td>市区</td><td>玉林G3售后服务厅</td><td>广西玉林市民主中路241号</td></tr>
-			<tr><td>百色</td><td>市区</td><td>右江G3服务厅</td><td>百色市新兴路深林广场旁移动G3服务厅</td></tr>
-			<tr><td>百色</td><td>县城</td><td>平果G3营业厅</td><td>平果县马头镇教育路君临天下小区门面</td></tr>
-			<tr><td>贵港</td><td>市区</td><td>贵港金港大道服务厅</td><td>港北区金港大道与中山路交汇处</td></tr>
-			<tr><td>梧州</td><td>市区</td><td>蝶山中山路营业厅</td><td>万秀区中山路4号</td></tr>
-			<tr><td>梧州</td><td>市区</td><td>蝶山三云营业厅</td><td>蝶山区蝶山一路41号</td></tr>
-			<tr><td>梧州</td><td>县城</td><td>岑溪商贸营业厅</td><td>岑溪商贸城农业银行旁</td></tr>
-			<tr><td>梧州</td><td>县城</td><td>苍梧龙城营业厅</td><td>苍梧县龙圩镇龙城路2号</td></tr>
-			<tr><td>梧州</td><td>县城</td><td>藤县龙盛营业厅</td><td>藤县藤州镇登俊路45号龙盛商厦首层</td></tr>
-			<tr><td>梧州</td><td>县城</td><td>蒙山西河营业厅</td><td>蒙山县解放街5号</td></tr>
-			<tr><td>北海</td><td>市区</td><td>时代广场一楼</td><td>北海大道119号</td></tr>
-			<tr><td>贺州</td><td>市区</td><td>贺州灵峰路服务厅</td><td>贺州市建设中路31号</td></tr>
-			<tr><td>贺州</td><td>县城</td><td>钟山兴中服务厅</td><td>钟山县兴钟中路钟房大厦</td></tr>
-			<tr><td>贺州</td><td>县城</td><td>昭平西宁服务厅</td><td>昭平县昭平镇东宁中路23号</td></tr>
-			<tr><td>贺州</td><td>县城</td><td>富川新永服务厅</td><td>富川县富阳镇富阳街</td></tr>
-		</table>
-       
-        <a name="h5"></a>
-        <h2 class="mt">常见问题</h2>
-		<dl>
-			<dt>1.参与购机活动有什么限制吗？</dt>
-			<dd>答：目前仅支持广西移动客户参与活动（如无广西移动号码，建议您先办理广西移动号码；已有广西移动号码的客户需结清当前欠费）；如果您的手机号码之前已参加过中国移动购机或其他互斥活动且未到期，活动到期后才可办理本次购机活动；参与购机活动时所赠送的话费及最低消费不包含支付、代收、梦网、彩铃结算类等费用，承诺最低话费消费次月生效，参与活动期间不能取消、叠加或重复办理活动，不可办理销户、过户、分合户等业务。</dd>
-		</dl>
-		<dl>
-			<dt>2.使用“手机号码+动态密码”方式登录是否能够在网上商城购物？</dt>
-			<dd>答：中国移动广西公司客户可以使用“手机号码+动态密码”或“手机号码+服务密码”的方式登录网上商城购物。</dd>
-		</dl>
-		<dl>
-			<dt>3.购买的商品可否配送到非手机号码归属地？</dt>
-			<dd>答：可支持全区配送。</dd>
-		</dl>
-		<dl>
-			<dt>4.在广西移动网上商城购手机会有发票吗？</dt>
-			<dd>答：您会在收到商品的同时收到发票。</dd>
-		</dl>
-		<dl>
-			<dt>5. 广西移动网上商城目前支持哪些付款方式？</dt>
-			<dd>答：网上商城为用户提供了手机支付账户和网银支付两种支付方式，请选择适合您的付款方式，后续逐步上线支付宝、财付通支付和货到付款等方式。</dd>
-		</dl>
-		<dl>
-			<dt>6.如是使用网上支付，如何能确认已支付成功？</dt>
-			<dd>答：（1）您可登录广西移动网上商城，进入“我的订单”，查询订单状态；<br />
-			   （2）您也可通过电话、ATM、柜台或登录网上银行等各种方式查询银行卡交易记录；<br />
-			   （3）如是出现账户余额不足、信用卡超额透支、意外断线等导致支付不成功，请您登录广西移动网上商城，进入“我的订单”，找到该张未支付成功的订单，重新完成支付。</dd>
-		</dl>
-		<dl>
-			<dt>7.使用网上支付，有哪些银行支持？</dt>
-			<dd>答：广西移动网上商城目前支持的银行有：招商银行、工商银行、建设银行、交通银行、农业银行、中国银行、民生银行、光大银行、兴业银行、华夏银行、浦发银行、中信银行、深发行、华夏银行、平安银行、渤海银行。若您选择网上支付，请在提交订单后的72小时内支付订单，若超过72小时未支付，您的订单将被自动取消。</dd>
-		</dl>
-		<dl>
-			<dt>8.广西移动网上商城出售的手机都是移动定制终端吗？</dt>
-			<dd>答：是的。</dd>
-		</dl>
-		<dl>
-			<dt>9.我已在网上支付成功付费，但商品没有配送成功，请问货款何时退回？</dt>
-			<dd>答：支付的费用会在订单配送失败后的30个工作日内自动退回扣款帐户，请您留意。</dd>
-		</dl>		
+				<li class="line"></li>
+				<li class="alg_c after"><a href="javascript:void(0);" title="高级搜索" class="btn80x22 open">高级搜索</a></li>
+			</ul>
+			
+		<iframe id="itemListIframe" src="${path }/item/listItem.do" frameBorder=0 scrolling=no width="100%" height="200%"  ></iframe>
+		
+			
 	</div>
 </div>
 
@@ -693,8 +716,6 @@ $(function(){
 	<p>掌上营业厅：<a href="#" title="掌上营业厅：wap.10086.cn">wap.10086.cn</a>&nbsp;&nbsp;语音自助服务：10086&nbsp;&nbsp;短信营业厅：10086&nbsp;&nbsp;<a href="http://www.bj.10086.cn/index/10086/channel/index.shtml">自助终端网点查询</a>&nbsp;&nbsp;<a href="http://www.bj.10086.cn/index/10086/channel/index.shtml">满意100营业厅网点查询</a>&nbsp;&nbsp;<a href="http://www.bj.10086.cn/index/10086/download/index.shtml">手机客户端下载</a></p>
 	<p><a href="#" title="京ICP备05002571" class="inb i18x22"></a>&nbsp;京ICP备05002571<samp>|</samp>中国移动通信集团&nbsp;版权所有</p>
 </div>
-
-<a href="#pageTop" class="backTop" title="返回页面顶部" style="display:none">返回页面顶部</a>
 
 <div id="loginAlert" class="alt login" style="display:none">
 	<h2 class="h2"><em title="登录">登录</em><cite></cite></h2>
@@ -771,3 +792,4 @@ $(function(){
 
 </body>
 </html>
+

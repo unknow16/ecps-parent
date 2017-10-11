@@ -1,7 +1,10 @@
 package com.fuyi.ecps.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +60,24 @@ public class EbItemServiceImpl implements EbItemService {
 		itemClobDao.saveItemClob(itemClob, item.getItemId());
 		skuDao.saveSku(skuList, item.getItemId());
 		
+	}
+
+	public List<EbItem> listItem(String price, Long brandId, String paraStr) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		if(StringUtils.isNotBlank(price) && !StringUtils.equals(price, "")) {
+			String[] prices = price.split("-");
+			map.put("minPrice", prices[0]);
+			map.put("maxPrice", prices[1]);
+		}
+		
+		map.put("brandId", brandId);
+		
+		if(StringUtils.isNotBlank(paraStr) && !StringUtils.equals(paraStr, "")) {
+			String[] paraList = paraStr.split(",");
+			map.put("paraList", paraList);
+		}
+		return itemDao.listItem(map);
 	}
 
 }

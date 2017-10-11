@@ -39,6 +39,10 @@
     <result column="GIFT_SHOW_TYPE" property="giftShowType" jdbcType="VARCHAR" />
     <result column="IMG_SIZE1" property="imgSize1" jdbcType="VARCHAR" />
   </resultMap>
+  
+  <resultMap type="com.fuyi.ecps.model.EbItem" id="listItemRM" extends="BaseResultMap">
+  	<result column="sku_price" property="skuPrice"/>
+  </resultMap>
   <sql id="Base_Column_List" >
     ITEM_ID, ITEM_NAME, ITEM_NO, BRAND_ID, CAT_ID, TAG_IMG_ID, TAG_IMG, IS_NEW, IS_GOOD, 
     IS_HOT, PROMOTION, AUDIT_STATUS, SHOW_STATUS, IMGS, KEYWORDS, PAGE_DESC, ITEM_RECYCLE, 
@@ -507,5 +511,71 @@
 					and c.item_name like '%${itemName}%'
 				</if>
 	          </where>
+  </select>
+  
+  <!-- 高级搜索 
+  	map.put("minPrice", 2000);
+  	map.put("maxPrice", 54000);
+  	map.put("brandId",1003);
+  	map.put("paraList", String[] paraList);
+  -->
+  <select id="listItem" parameterType="map" resultMap="listItemRM">
+  	select min(es.sku_price) sku_price, ei.*
+	from eb_item ei,eb_sku es
+	
+	<where>
+		ei.ITEM_ID = es.item_id
+		<if test="minPrice != null">
+			and es.SKU_PRICE BETWEEN #{minPrice} and #{maxPrice}
+		</if>
+		<if test="brandId != null">
+			and ei.BRAND_ID = #{brandId}
+		</if>
+		<if test="paraList != null">
+			<foreach collection="paraList" item="paraValue">
+			and exists (select * 
+	            from eb_para_value t
+	            where ei.item_id = t.item_id
+	            and t.para_value = #{paraValue})
+			</foreach>
+		</if>
+	</where>
+	group by ei.ITEM_ID, 
+	        ei.ITEM_NAME, 
+	        ei.ITEM_NO, 
+	        ei.BRAND_ID, 
+	        ei.CAT_ID, 
+	        ei.TAG_IMG_ID, 
+	        ei.TAG_IMG, 
+	        ei.IS_NEW, 
+	        ei.IS_GOOD, 
+	    ei.IS_HOT, 
+	    ei.PROMOTION, 
+	    ei.AUDIT_STATUS, 
+	    ei.SHOW_STATUS, 
+	    ei.IMGS, 
+	    ei.KEYWORDS, 
+	    ei.PAGE_DESC, 
+	    ei.ITEM_RECYCLE, 
+	    ei.ON_SALE_TIME, 
+	    ei.CHECK_TIME, 
+	    ei.UPDATE_TIME, 
+	    ei.UPDATE_USER_ID, 
+	    ei.CREATE_TIME, 
+	    ei.CHECKER_USER_ID, 
+	    ei.FULL_PATH_DEPLOY, 
+	    ei.FULL_PATH_DEPLOY_OFFER, 
+	    ei.ORIGINAL_ITEM_ID, 
+	    ei.LAST_STATUS, 
+	    ei.MERCHANT_ID, 
+	    ei.ITEM_SORT, 
+	    ei.SALES, 
+	    ei.CREATE_USER_ID, 
+	    ei.SIM_LEVEL, 
+	    ei.GIFT_DESC, 
+	    ei.GIFT_IMG, 
+	    ei.GIFT_SHOW_TYPE, 
+	    ei.IMG_SIZE1
+	order by ei.item_id desc
   </select>
 </mapper>

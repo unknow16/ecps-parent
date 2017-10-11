@@ -1,6 +1,7 @@
 package com.fuyi.ecps.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,7 @@ public class EbItemDaoImpl extends SqlSessionDaoSupport implements EbItemDao {
 		this.getSqlSession().insert(ns + "insert", item);
 	}
 
-	
-
+	public List<EbItem> listItem(Map<String, Object> map) {
+		return this.getSqlSession().selectList(ns+"listItem", map);
+	}
 }

@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="../taglibs.jsp" %>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -19,9 +20,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
-<link rel="stylesheet" href="../../res/css/style.css" />
-<script src="../../res/js/jquery.js"></script>
-<script src="../../res/js/com.js"></script>
+<link rel="stylesheet" href="${path }/res/css/style.css" />
+<script src="${path }/res/js/jquery.js"></script>
+<script src="${path }/res/js/com.js"></script>
 <script type="text/javascript">
 $(function(){
 
@@ -36,8 +37,40 @@ $(function(){
 	$("#transitAlertIs").click(function(){
 		tipShow('#transitAlert');
 	});
+	
+	//前台用户输入校验
+	$("#.bg_text input").blur(function() {
+		var val = $(this).val();
+		var type = $(this).attr("name");
+		if(val == null || $.trim(val) == "" ) {
+			if(type == "username") {
+				$("#errorName").html("请输入用户名");
+				$("#errorName").show(500);
+			} else if(type == "password") {
+				$("#errorName").html("请输入密码");
+				$("#errorName").show(500);
+			} else if(type == "captcha") {
+				$("#errorName").html("请输入验证码");
+				$("#errorName").show(500);
+			}
+		} else {
+			$("#errorName").hide(500);
+		}
+	});
+	
+	//验证码后台校验
+	var captchaError = $("#captchaError").val();
+	if(captchaError == "captchaError") {
+		$("#errorName").html("验证码错误");
+		$("#errorName").show(500);
+	}
 
 });
+
+function changeImage() {
+	$("#captchaImg").attr("src", "${path }/user/getImage.do?d=" + new Date());
+}
+
 function login(){
 	window.location.href="../phoneClassification.jsp";
 }
@@ -274,12 +307,11 @@ function login(){
 </div>
 
 <div class="sign">
-	<div class="l ad420x205"><a href="#" title="title"><img src="../../res/img/pic/ad420x205.jpg" alt="" /></a></div>
+	<div class="l ad420x205"><a href="#" title="title"><img src="${path }/res/img/pic/ad420x205.jpg" alt="" /></a></div>
 	<div class="r">
 		<h2 title="登录移动商城">登录移动商城</h2>
-		<form id="jvForm" action="../phoneClassification.jsp" method="post">
-			<input type="hidden" name="returnUrl" value="${returnUrl}"/>
-			<input type="hidden" name="processUrl" value="${processUrl}"/>
+		<form id="jvForm" action="${path }/user/login.do" method="post">
+			<input type="hidden" id="captchaError" name="captchaError" value="${tip}"/>
 			<ul class="uls form">
 			<li id="errorName" class="errorTip" style="display:none">${error}</li>
 			<li><label for="username">用户名：</label>
@@ -296,7 +328,7 @@ function login(){
 				<span class="bg_text small">
 					<input type="text" id="captcha" name="captcha" maxLength="7" vld="{required:true}" />
 				</span>
-				<img src="../../res/img/pic/code.png" onclick="this.src='${base}/captcha.svl?d='+new Date()" class="code" alt="换一张" /><a href="javascript:void(0);" onclick="this.src='${base}/captcha.svl?d='+new Date()" title="换一张">换一张</a></li>
+				<img id="captchaImg" src="${path }/user/getImage.do" onclick="this.src='${path }/user/getImage.do?d='+new Date()" class="code" alt="换一张" /><a href="javascript:void(0);" onclick="changeImage()" title="换一张">换一张</a></li>
 			<li class="gray"><label for="">&nbsp;</label><input type="checkbox" name="" />30天内免登录（公共电脑勿用）</li>
 			<li><label for="">&nbsp;</label><input type="submit" value="登 录" class="hand btn66x23"/><a href="#" title="忘记密码？">忘记密码？</a></li>
 			<li class="alg_c dev gray">还不是移动商城会员？<a href="../passport/register.html" title="免费注册">免费注册</a></li>

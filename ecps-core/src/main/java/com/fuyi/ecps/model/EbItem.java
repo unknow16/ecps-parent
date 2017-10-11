@@ -1,8 +1,13 @@
 package com.fuyi.ecps.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class EbItem {
+	
+	private BigDecimal skuPrice;
+	
+	/**************************/
     private Long itemId;
 
     private String itemName;
@@ -75,7 +80,17 @@ public class EbItem {
 
     private String imgSize1;
 
-    public Long getItemId() {
+    
+    
+    public BigDecimal getSkuPrice() {
+		return skuPrice;
+	}
+
+	public void setSkuPrice(BigDecimal skuPrice) {
+		this.skuPrice = skuPrice;
+	}
+
+	public Long getItemId() {
         return itemId;
     }
 

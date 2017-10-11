@@ -1,7 +1,7 @@
 -- 创建数据表空间
 create tablespace gx1110 
 logging
-datafile ''
+datafile 'C:\oraclexe\app\oracle\oradata\XE\gx1020.dbf'
 size 32m
 autoextend on 
 next 32m maxsize 2048m

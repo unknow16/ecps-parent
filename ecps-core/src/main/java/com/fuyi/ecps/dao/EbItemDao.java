@@ -1,6 +1,7 @@
 package com.fuyi.ecps.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fuyi.ecps.model.EbItem;
 import com.fuyi.ecps.model.QueryCondition;
@@ -12,4 +13,6 @@ public interface EbItemDao {
 	public Integer selectItemByConditionCount(QueryCondition qc);
 
 	public void saveItem(EbItem item);
+	
+	public List<EbItem> listItem(Map<String, Object> map);
 }
