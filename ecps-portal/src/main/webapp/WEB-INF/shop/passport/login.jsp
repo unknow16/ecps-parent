@@ -59,9 +59,12 @@ $(function(){
 	});
 	
 	//验证码后台校验
-	var captchaError = $("#captchaError").val();
-	if(captchaError == "captchaError") {
+	var error = $("#captchaError").val();
+	if(error == "captchaError") {
 		$("#errorName").html("验证码错误");
+		$("#errorName").show(500);
+	} else if(error == "userpasswordError") {
+		$("#errorName").html("用户名或密码错误");
 		$("#errorName").show(500);
 	}
 

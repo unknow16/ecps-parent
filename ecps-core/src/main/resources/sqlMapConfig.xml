@@ -13,6 +13,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="com/fuyi/ecps/sqlMap/EbParaValueMapper.xml"/>
 		<mapper resource="com/fuyi/ecps/sqlMap/EbSkuMapper.xml"/>
 		<mapper resource="com/fuyi/ecps/sqlMap/EbSpecValueMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/TsPtlUserMapper.xml"/>
 	</mappers>
 
 </configuration>

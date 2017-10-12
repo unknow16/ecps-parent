@@ -3,7 +3,6 @@ package com.fuyi.ecps.dao.impl;
 import java.util.List;
 
 import org.mybatis.spring.support.SqlSessionDaoSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.fuyi.ecps.dao.EbFeatureDao;

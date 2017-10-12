@@ -11,13 +11,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fuyi.ecps.model.TsPtlUser;
+import com.fuyi.ecps.service.TsPtlUserService;
+import com.fuyi.ecps.utils.MD5;
+
 @Controller
 @RequestMapping("/user")
 public class EbUserController {
+	
+	@Autowired
+	private TsPtlUserService userService;
 	
 	@RequestMapping("/toLogin.do")
 	public String toLogin() {
@@ -38,11 +47,21 @@ public class EbUserController {
 
 		//校验验证码
 		String piccode = (String) session.getAttribute("piccode");
-		if(!piccode.equalsIgnoreCase(captcha)) {
-			model.addAttribute("tip", "captchaError");
-			return "passport/login";
+		if(StringUtils.isNotBlank(piccode) && !StringUtils.equalsIgnoreCase(piccode, "")) {
+			if(!piccode.equalsIgnoreCase(captcha)) {
+				model.addAttribute("tip", "captchaError");
+				return "passport/login";
+			}
 		}
 		
+		//登录查询用户
+		password = MD5.GetMD5Code(password);
+		TsPtlUser user = userService.selectUserByUsernameAndPassword(username, password);
+		if(user == null) {
+			model.addAttribute("tip", "userpasswordError");
+			return "passport/login";
+		}
+		session.setAttribute("user", user);
 		
 		return "redirect:/item/toIndex.do";
 	}
