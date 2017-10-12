@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +20,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.fuyi.ecps.model.TsPtlUser;
+import com.fuyi.ecps.service.EbItemService;
 import com.fuyi.ecps.service.TsPtlUserService;
+import com.fuyi.ecps.utils.ECPSUtils;
 import com.fuyi.ecps.utils.MD5;
 
 @Controller
@@ -55,15 +59,49 @@ public class EbUserController {
 		}
 		
 		//登录查询用户
-		password = MD5.GetMD5Code(password);
+/*		password = MD5.GetMD5Code(password);
 		TsPtlUser user = userService.selectUserByUsernameAndPassword(username, password);
 		if(user == null) {
 			model.addAttribute("tip", "userpasswordError");
 			return "passport/login";
 		}
+		session.setAttribute("user", user);*/
+		
+		TsPtlUser user = new TsPtlUser();
+		user.setUsername("付一鸣");
 		session.setAttribute("user", user);
 		
 		return "redirect:/item/toIndex.do";
+	}
+	
+	@RequestMapping("/getUser.do")
+	public void getUser(HttpSession session, HttpServletResponse resp) {
+		TsPtlUser user = (TsPtlUser) session.getAttribute("user");
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.accumulate("user", user);
+		
+		ECPSUtils.printJSON(jsonObject.toString(), resp);
+	}
+	
+	@RequestMapping("/login/toPerson.do")
+	public String toPerson() {
+		return "person/index";
+	}
+	
+	@RequestMapping("/login/toDeliverAddress.do")
+	public String toDeliverAddress() {
+		return "person/deliverAddress";
+	}
+	
+	@RequestMapping("/login/toMyOrders.do")
+	public String toMyOrders() {
+		return "person/myOrders";
+	}
+	
+	@RequestMapping("/login/toChangePassword.do")
+	public String toChanagePassword() {
+		return "person/changePassword";
 	}
 	
 	@RequestMapping("/getImage.do")

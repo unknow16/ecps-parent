@@ -1,6 +1,10 @@
 package com.fuyi.ecps.model;
 
 public class EbParaValue {
+	
+	private String featureName;
+	
+	
     private Long paraId;
 
     private Long itemId;
@@ -9,7 +13,17 @@ public class EbParaValue {
 
     private String paraValue;
 
-    public Long getParaId() {
+    
+
+	public String getFeatureName() {
+		return featureName;
+	}
+
+	public void setFeatureName(String featureName) {
+		this.featureName = featureName;
+	}
+
+	public Long getParaId() {
         return paraId;
     }
 

@@ -5,6 +5,12 @@ import java.util.Date;
 import java.util.List;
 
 public class EbSku {
+	
+    private List<EbSpecValue> specValueList;
+    
+    //********************************
+	
+	
     private Long skuId;
 
     private Long itemId;
@@ -50,8 +56,6 @@ public class EbSku {
     private String resCode;
 
     private Integer packId;
-    
-    private List<EbSpecValue> specValueList;
     
     public List<EbSpecValue> getSpecValueList() {
 		return specValueList;

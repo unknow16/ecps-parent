@@ -28,6 +28,11 @@ public class EbItemDaoImpl extends SqlSessionDaoSupport implements EbItemDao {
 	}
 
 	public List<EbItem> listItem(Map<String, Object> map) {
-		return this.getSqlSession().selectList(ns+"listItem", map);
+		List<EbItem> items = this.getSqlSession().selectList(ns+"listItem", map);
+		return items;
+	}
+
+	public EbItem selectItemDetailById(Long itemId) {
+		return this.getSqlSession().selectOne(ns + "selectItemDetailById", itemId);
 	}
 }

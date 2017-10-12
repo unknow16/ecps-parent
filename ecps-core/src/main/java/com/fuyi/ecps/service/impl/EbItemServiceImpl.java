@@ -80,4 +80,8 @@ public class EbItemServiceImpl implements EbItemService {
 		return itemDao.listItem(map);
 	}
 
+	public EbItem selectItemDetailById(Long itemId) {
+		return itemDao.selectItemDetailById(itemId);
+	}
+
 }

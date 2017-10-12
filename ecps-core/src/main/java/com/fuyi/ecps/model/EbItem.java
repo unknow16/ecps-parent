@@ -2,10 +2,17 @@ package com.fuyi.ecps.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class EbItem {
 	
 	private BigDecimal skuPrice;
+	
+	private EbItemClob itemClob;
+	
+	private List<EbParaValue> paraList;
+	
+	private List<EbSku> skuList;
 	
 	/**************************/
     private Long itemId;
@@ -81,8 +88,31 @@ public class EbItem {
     private String imgSize1;
 
     
-    
-    public BigDecimal getSkuPrice() {
+    public EbItemClob getItemClob() {
+		return itemClob;
+	}
+
+	public void setItemClob(EbItemClob itemClob) {
+		this.itemClob = itemClob;
+	}
+
+	public List<EbParaValue> getParaList() {
+		return paraList;
+	}
+
+	public void setParaList(List<EbParaValue> paraList) {
+		this.paraList = paraList;
+	}
+
+	public List<EbSku> getSkuList() {
+		return skuList;
+	}
+
+	public void setSkuList(List<EbSku> skuList) {
+		this.skuList = skuList;
+	}
+
+	public BigDecimal getSkuPrice() {
 		return skuPrice;
 	}
 

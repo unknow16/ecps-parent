@@ -27,7 +27,7 @@ public class EbItemController {
 	@Autowired
 	private EbItemService itemService;
 	
-	@RequestMapping("toIndex.do")
+	@RequestMapping("/toIndex.do")
 	public String toIndex(Model model) {
 		List<EbBrand> brandList = brandService.selectBrand();
 		List<EbFeature> IsSelFeatureList = featureService.selectIsSelFeature();
@@ -37,10 +37,21 @@ public class EbItemController {
 		return "index";
 	}
 	
-	@RequestMapping("listItem.do")
+	@RequestMapping("/listItem.do")
 	public String listItem(String price, Long brandId, String paraStr, Model model) {
 		List<EbItem> itemList = itemService.listItem(price, brandId, paraStr);
+		
+		for (EbItem ebItem : itemList) {
+			ebItem.setImgs("/upload/20171012174623176881.jpg");
+		}
 		model.addAttribute("itemList", itemList);
 		return "phoneClassification";
+	}
+	
+	@RequestMapping("/productDetail.do")
+	public String productDetail(Long itemId, Model model) {
+		EbItem item = itemService.selectItemDetailById(itemId);
+		model.addAttribute("item", item);
+		return "productDetail";
 	}
 }

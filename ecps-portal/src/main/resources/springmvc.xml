@@ -23,4 +23,11 @@
 		<property name="suffix" value=".jsp"></property>
 	</bean>
 	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/user/login/**"/>
+			<bean class="com.fuyi.ecps.interceptor.LoginInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
 </beans>

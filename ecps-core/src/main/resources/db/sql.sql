@@ -64,6 +64,23 @@ group by ei.ITEM_ID,
     ei.GIFT_SHOW_TYPE, 
     ei.IMG_SIZE1
 order by ei.item_id desc
+
+
+-- 商品单品页查询
+select * 
+from eb_item ei, -- 商品
+    eb_item_clob ic, -- 商品详情
+    eb_para_value pv, -- 商品规格
+    eb_sku es,        -- 最小销售单员
+    eb_spec_value sv,  -- sku spec
+    eb_feature ef      -- 规格key
+    where 
+       ei.item_id = pv.ITEM_ID
+       and  ei.item_id = ic.ITEM_ID
+        and ei.item_id = es.item_id
+        and es.sku_id = sv.sku_id(+)
+        and pv.feature_id = ef.feature_id
+        and ei.item_id = 3061
     
 
 

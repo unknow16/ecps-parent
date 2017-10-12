@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="../taglibs.jsp" %>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -20,9 +21,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
-<link rel="stylesheet" href="../../res/css/style.css" />
-<script src="../../res/js/jquery.js"></script>
-<script src="../../res/js/com.js"></script>
+<link rel="stylesheet" href="${path }/res/css/style.css" />
+<script src="${path }/res/js/jquery.js"></script>
+
+<script type="text/javascript">var path = "${path}";</script>
+<script src="${path }/res/js/getUser.js"></script>
+
+<script src="${path }/res/js/com.js"></script>
 <script type="text/javascript">
 $(function(){
 
@@ -317,7 +322,7 @@ $(function(){
 		<h2 class="h2 h2_l"><em title="交易管理">交易管理</em><cite>&nbsp;</cite></h2>
 		<div class="box bg_gray">
 			<ul class="ul left_nav">
-			<li><a href="../person/myOrders.jsp" title="我的订单">我的订单</a></li>
+			<li><a href="${path }/user/login/toMyOrders.do" title="我的订单">我的订单</a></li>
 			<li><a href="../person/returnOrders.jsp" title="退换货订单">退换货订单</a></li>
 			<li><a href="../person/myFavorites.jsp" title="我的收藏">我的收藏</a></li>
 			</ul>
@@ -327,8 +332,8 @@ $(function(){
 		<div class="box bg_gray">
 			<ul class="ul left_nav">
 			<li><a href="../person/profile.jsp" title="个人资料">个人资料</a></li>
-			<li><a href="../person/deliverAddress.jsp" title="收货地址">收货地址</a></li>
-			<li><a href="../person/changePassword.jsp" title="修改密码">修改密码</a></li>
+			<li><a href="${path }/user/login/toDeliverAddress.do" title="收货地址">收货地址</a></li>
+			<li><a href="${path }/user/login/toChangePassword.do" title="修改密码">修改密码</a></li>
 			</ul>
 		</div>
 

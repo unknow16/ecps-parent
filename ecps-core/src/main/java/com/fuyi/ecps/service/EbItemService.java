@@ -23,4 +23,6 @@ public interface EbItemService {
 	 * @return
 	 */
 	public List<EbItem> listItem(String price, Long brandId, String paraStr);
+	
+	public EbItem selectItemDetailById(Long itemId);
 }
