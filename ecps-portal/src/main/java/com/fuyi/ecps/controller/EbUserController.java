@@ -59,17 +59,17 @@ public class EbUserController {
 		}
 		
 		//登录查询用户
-/*		password = MD5.GetMD5Code(password);
+		password = MD5.GetMD5Code(password);
 		TsPtlUser user = userService.selectUserByUsernameAndPassword(username, password);
 		if(user == null) {
 			model.addAttribute("tip", "userpasswordError");
 			return "passport/login";
 		}
-		session.setAttribute("user", user);*/
-		
-		TsPtlUser user = new TsPtlUser();
-		user.setUsername("付一鸣");
 		session.setAttribute("user", user);
+		
+/*		TsPtlUser user = new TsPtlUser();
+		user.setUsername("付一鸣");
+		session.setAttribute("user", user);*/
 		
 		return "redirect:/item/toIndex.do";
 	}

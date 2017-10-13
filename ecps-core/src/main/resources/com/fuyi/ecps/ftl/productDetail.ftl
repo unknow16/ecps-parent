@@ -1,10 +1,3 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ include file="taglibs.jsp" %>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -17,14 +10,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10" />
 <title>商品详细_移动商城_中国移动通信</title>
+
+<#assign path="http://localhost:8082/ecps-portal">
+<#assign file_path="http://localhost:8084/ecps-file">
+
+
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
-<link rel="stylesheet" href="../res/css/style.css" />
-<script src="../res/js/jquery.js"></script>
+<link rel="stylesheet" href="${path}/res/css/style.css" />
+<script src="${path}/res/js/jquery.js"></script>
 <script type="text/javascript">var path = "${path}";</script>
 <script src="${path }/res/js/getUser.js"></script>
-<script src="../res/js/com.js"></script>
+<script src="${path}/res/js/com.js"></script>
 <script type="text/javascript">
 $(function(){
 	
@@ -685,24 +683,21 @@ function addCart(){
 				<div class="box_orange">
 					<ul class="uls form">
 					<li><label>规　　格：</label><div class="pre spec">
-						<c:forEach items="${item.skuList }" var="sku" varStatus="state">
-							<c:choose>
-								<c:when test="${state.index == 0 }">
-									<a href="javascript:void(0);" title="黑色16G" class="here" skuId="${sku.skuId }">
-										<c:forEach items="${sku.specValueList }" var="spec">
+						<#list item.skuList as sku>
+								<#if sku_index == 0>
+									<a href="javascript:void(0);" title="黑色16G" class="here" skuId="${sku.skuId?c }">
+										<#list sku.specValueList as spec>
 											${spec.specValue }
-										</c:forEach>
+										</#list>
 									</a>
-								</c:when>
-								<c:otherwise>
-									<a href="javascript:void(0);" title="黑色16G" skuId="${sku.skuId }">
-										<c:forEach items="${sku.specValueList }" var="spec">
+								<#else>
+									<a href="javascript:void(0);" title="黑色16G" skuId="${sku.skuId?c }">
+										<#list sku.specValueList as spec>
 											${spec.specValue }
-										</c:forEach>
+										</#list>
 									</a>
-								</c:otherwise>
-							</c:choose>
-						</c:forEach>
+								</#if>
+						</#list>
 					</div></li>
 					<li><label>我 要 买：</label><a href="javascript:void(0);" class="inb sub"></a><input readonly type="text" name="" value="1" class="num" size="3" /><a href="javascript:void(0);" class="inb add"></a><em id="sub_add_msg" class="red"></em></li>
 					<li class="submit">
@@ -716,12 +711,12 @@ function addCart(){
 
 				<dl class="box_orange msg">
                     <dt class="failMsg">该商品已下架或未参加活动！</dt>
-                    <dd>你可以：<p>1、联系客服电话&nbsp;<var>10086</var>；<br>2、返回&nbsp;<a href="${siteBaseDN}index.html" title="商城首页">商城首页<samp>&gt;&gt;</samp>。</a></p></dd>
+                    <dd>你可以：<p>1、联系客服电话&nbsp;<var>10086</var>；<br>2、返回&nbsp;<a href="index.html" title="商城首页">商城首页<samp>&gt;&gt;</samp>。</a></p></dd>
 				</dl>
 
 				<dl class="box_orange msg">
                     <dt class="failMsg">该商品已下架或未参加活动</dt>
-                    <dd>你可以：<p>1、联系客服电话&nbsp;<var>10086</var>；<br>2、返回&nbsp;<a href="${siteBaseDN}index.html" title="商城首页">商城首页<samp>&gt;&gt;</samp>。</a></p></dd>
+                    <dd>你可以：<p>1、联系客服电话&nbsp;<var>10086</var>；<br>2、返回&nbsp;<a href="index.html" title="商城首页">商城首页<samp>&gt;&gt;</samp>。</a></p></dd>
 				</dl>
 
 			</form>
@@ -765,13 +760,13 @@ function addCart(){
 				</thead>
 				<tbody>
 				
-				<c:forEach items="${item.paraList }" var="para">
+				<#list item.paraList as para>
 				
 					<tr>
 					<th width="15%" class="alg_r">${para.featureName }</th>
 					<td>${para.paraValue }</td>
 					</tr>        
-				</c:forEach>
+				</#list>
 				
 				</tbody>
 				</table>

@@ -14,7 +14,7 @@ public class TsPtlUserDaoImpl extends SqlSessionDaoSupport implements TsPtlUserD
 	String ns = "com.fuyi.ecps.sqlMap.TsPtlUserMapper.";
 
 	public TsPtlUser selectUserByUsernameAndPassword(Map<String, String> map) {
-		TsPtlUser user = this.getSqlSession().selectOne(ns + "selectUserByUsernameAndPassword", map);
+		TsPtlUser user = this.getSqlSession().selectOne(ns + "selectUserByUserAndPass", map);
 		return user;
 	}
 

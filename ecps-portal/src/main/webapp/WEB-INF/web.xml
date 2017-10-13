@@ -8,7 +8,7 @@
 	</listener>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:beans.xml</param-value>
+		<param-value>classpath:beans.xml, classpath:cxf-servlet.xml</param-value>
 	</context-param>
 	
 	<servlet>
@@ -23,6 +23,15 @@
 	<servlet-mapping>
 		<servlet-name>springmvc</servlet-name>
 		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>cxf</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>cxf</servlet-name>
+		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
 	
 	<filter> 
