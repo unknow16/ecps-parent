@@ -1,5 +1,6 @@
 package com.fuyi.ecps.controller;
 
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import com.fuyi.ecps.model.QueryCondition;
 import com.fuyi.ecps.service.EbBrandService;
 import com.fuyi.ecps.service.EbFeatureService;
 import com.fuyi.ecps.service.EbItemService;
+import com.fuyi.ecps.utils.ECPSUtils;
 import com.fuyi.ecps.utils.Page;
 
 @Controller
@@ -183,5 +185,13 @@ public class EbItemController {
 		model.addAttribute("page", page);
 		model.addAttribute("brandList", brandList);
 		return "item/listAudit";
+	}
+	
+	@RequestMapping("/publishItem.do")
+	public void publishItem(Long itemId, PrintWriter out) {
+		
+		String password = ECPSUtils.readProp("ws_password");
+		String result = itemService.publishItem(itemId, password);
+		out.write(result);
 	}
 }

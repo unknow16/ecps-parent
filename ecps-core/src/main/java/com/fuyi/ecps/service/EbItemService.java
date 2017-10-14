@@ -25,4 +25,6 @@ public interface EbItemService {
 	public List<EbItem> listItem(String price, Long brandId, String paraStr);
 	
 	public EbItem selectItemDetailById(Long itemId);
+	
+	public String publishItem(Long itemId, String password);
 }

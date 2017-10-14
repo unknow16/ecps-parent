@@ -8,6 +8,8 @@ public class EbSku {
 	
     private List<EbSpecValue> specValueList;
     
+    private EbItem item;
+    
     //********************************
 	
 	
@@ -57,7 +59,17 @@ public class EbSku {
 
     private Integer packId;
     
-    public List<EbSpecValue> getSpecValueList() {
+    
+    
+    public EbItem getItem() {
+		return item;
+	}
+
+	public void setItem(EbItem item) {
+		this.item = item;
+	}
+
+	public List<EbSpecValue> getSpecValueList() {
 		return specValueList;
 	}
 

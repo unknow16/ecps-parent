@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ include file="../taglibs.jsp" %>
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -19,9 +20,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
-<link rel="stylesheet" href="../../res/css/style.css" />
-<script src="../../res/js/jquery.js"></script>
-<script src="../../res/js/com.js"></script>
+<link rel="stylesheet" href="${path }/res/css/style.css" />
+<script src="${path }/res/js/jquery.js"></script>
+<script type="text/javascript">var path = "${path}";</script>
+<script src="${path }/res/js/getUser.js"></script>
+<script src="${path }/res/js/com.js"></script>
 <script type="text/javascript">
 $(function(){
 
@@ -38,10 +41,179 @@ $(function(){
 	});
 
 	
+	//前台用户输入校验
+	$("#.bg_text input").blur(function() {
+		var val = $(this).val();
+		var type = $(this).attr("name");
+		if(val == null || $.trim(val) == "" ) {
+			if(type == "username") {
+				$("#errorName").html("请输入用户名");
+				$("#errorName").show(500);
+			} else if(type == "password") {
+				$("#errorName").html("请输入密码");
+				$("#errorName").show(500);
+			} else if(type == "captcha") {
+				$("#errorName").html("请输入验证码");
+				$("#errorName").show(500);
+			}
+		} else {
+			$("#errorName").hide(500);
+		}
+	});
+	
 });
 
+function loginAjax() {
+	var username = $("#username").val();
+	var password = $("#password").val();
+	var loginCaptcha = $("#loginCaptcha").val();
+	
+	$.ajax({
+		url: "${path}/user/loginAjax.do",
+		type:"post",
+		dataType:"text",
+		data:{
+			username:username,
+			password:password,
+			loginCaptcha:loginCaptcha
+		},
+		success:function(respText){
+			if(respText == "captchaError") {
+				$("#errorName").html("验证码错误");
+				$("#errorName").show(500);
+			} else if(respText == "userpasswordError") {
+				$("#errorName").html("用户名或密码错误");
+				$("#errorName").show(500);
+			} else if(respText == "success") {
+				//回显用户名
+				$("#loginAlertIs").html(username);
+				tipHide("#loginAlert");
+				
+				//校验库存
+				var result = validCart();
+				if(result == "success") {
+					window.location.href = "${path}/order/toSubmitOrder.do";
+				} else {
+					alert(result);
+				}
+			}
+		},
+		error:function() {
+			alert("系统错误");
+		}
+	});
+}
+
+function validCart() {
+	var result = null;
+	$.ajax({
+		url: "${path}/cart/validCart.do",
+		type:"post",
+		dataType:"text",
+		async:false,
+		success:function(respText){
+			result = respText;
+		},
+		error:function() {
+			alert("系统错误");
+		}
+	});
+	return result;
+}
+
+function changeImage() {
+	$("#captchaImg").attr("src", "${path }/user/getImage.do?d=" + new Date());
+}
+
 function trueBuy(){
-	window.location.href = "./confirmProductCase.jsp";
+	//window.location.href = "./confirmProductCase.jsp";
+	//校验用户是否登录
+	$.ajax({
+		url: "${path}/user/getUser.do",
+		type:"post",
+		dataType:"text",
+		success:function(respText){
+			var userObj = $.parseJSON(respText);
+			if(userObj.user != null) {
+				
+				//校验库存
+				var result = validCart();
+				alert(result);
+				if(result == "success") {
+					window.location.href = "${path}/order/toSubmitOrder.do";
+				} else {
+					alert(result);
+				}
+				
+			} else {
+				tipShow("#loginAlert");
+			}
+		},
+		error:function() {
+			alert("系统错误");
+		}
+	});
+}
+
+function addNum(skuId, quantity) {//5
+	//校验库存
+	quantity++; //6
+	var skuObj = validStock(skuId,quantity);
+	alert(skuObj.stock);
+	
+	if(skuObj.result == "no"){
+		alert("当前商品库存不足" + quantity + "个,仅有" + skuObj.stock + "个");
+		return;
+	}
+	
+	window.location.href = "${path}/cart/addCartNum.do?skuId=" + skuId;
+}
+
+function reduceNum(skuId, quantity) {// 5
+	//校验库存
+	quantity--;
+	var skuObj = validStock(skuId,quantity);
+	
+	alert(skuObj.stock);
+	if(skuObj.result == "no"){
+		alert("当前商品库存不足" + quantity + "个,仅有" + skuObj.stock + "个");
+		return;
+	}
+	
+	//
+	if(quantity == 0) {
+		if(confirm("是否把该商品从购物车中删除？")){
+			window.location.href = "${path}/cart/deleteCart.do?skuId=" + skuId;
+		}
+	} else {
+			window.location.href = "${path}/cart/reduceCart.do?skuId=" + skuId;
+	}
+}
+
+function deleteCart(skuId) {
+	window.location.href = "${path}/cart/deleteCart.do?skuId=" + skuId;
+}
+
+//校验库存
+function validStock(skuId,quantity) {
+	var result = null;
+	$.ajax({
+		url:"${path}/cart/validStockCar.do",
+		type:"post",
+		dataType:"text",
+		async:false,
+		data:{
+			skuId:skuId,
+			quantity:quantity
+		},
+		success:function(resp){
+			result = $.parseJSON(resp);
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	});
+	return result;
 }
 </script>
 </head>
@@ -163,6 +335,7 @@ function trueBuy(){
 			<tr>
 			<th>商品编号</th>
 			<th class="wp">商品名称</th>
+			<th>规格</th>
 			<th>单价（元）</th>
 			<th>数量</th>
 			<th>小计（元）</th>
@@ -170,78 +343,50 @@ function trueBuy(){
 			</tr>     
 			</thead>
 			<tbody>
-				<tr>
-					<td>H7859454</td>
-					<td class="nwp pic">
-						<ul class="uls">
-							<li>
-								<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
-								<dl>
-									<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
-								</dl>
-							</li>
-							<li>
-								<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
-								<dl>
-									<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
-									<dd>全球通88初始套餐（预付费）</dd>
-									<dd><span class="red">【赠品】</span>
-										<p class="box_d bg_gray2 gray"><a href="#" title="1、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM">1、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM</a><br /><a href="#" title="2、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM">2、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM</a></p>
-									</dd>
-								</dl>
-							</li>
-							<li>
-								<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
-								<dl>
-									<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
-									<dd>全球通88初始套餐（预付费）</dd>
-								</dl>
-							</li>
-						</ul>
-					</td>
-					<td>￥3567.00</td>
-					<td>
-						<a href="javascript:void(0);" title="减" class="inb arr">-</a><input type="text" class="txts" size="1" name="" value="1" /><a href="javascript:void(0);" title="加" class="inb arr">+</a></td>
-					<td>￥3567.00</td>
-					<td class="blue"><a href="javascript:void(0);" title="删除">删除</a><br /><a href="javascript:void(0);" title="收藏">收藏</a></td>
-				</tr>        
-				<tr class="over">
-					<td>H7859454</td>
-					<td class="nwp pic">
-						<ul class="uls">
-							<li>
-								<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
-								<dl>
-									<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
-								</dl>
-							</li>
-						</ul>
-					</td>
-					<td>￥3567.00</td>
-					<td>
-						<a href="javascript:void(0);" title="减" class="inb arr">-</a><input type="text" class="txts" size="1" name="" value="1" /><a href="javascript:void(0);" title="加" class="inb arr">+</a></td>
-					<td>￥3567.00</td>
-					<td class="blue"><a href="javascript:void(0);" title="删除">删除</a><br /><a href="javascript:void(0);" title="收藏">收藏</a></td>
-				</tr>
-				<tr>
-					<td>H7859454</td>
-					<td class="nwp pic">
-						<ul class="uls">
-							<li>
-								<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
-								<dl>
-									<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
-									<dd>全球通88初始套餐（预付费）</dd>
-								</dl>
-							</li>
-						</ul>
-					</td>
-					<td>￥3567.00</td>
-					<td>
-						<a href="javascript:void(0);" title="减" class="inb arr">-</a><input type="text" class="txts" size="1" name="" value="1" /><a href="javascript:void(0);" title="加" class="inb arr">+</a></td>
-					<td>￥3567.00</td>
-					<td class="blue"><a href="javascript:void(0);" title="删除">删除</a><br /><a href="javascript:void(0);" title="收藏">收藏</a></td>
-				</tr> 
+				<c:forEach items="${cartList }" var="cart">
+				
+				
+					<tr>
+						<td>${cart.sku.item.itemNo }</td>
+						<td class="nwp pic">
+							<ul class="uls">
+								<li>
+									<a href="#" title="摩托罗拉ME525" class="pic"><img src="${file_path }${cart.sku.item.imgs }" alt="摩托罗拉ME525" /></a>
+									<dl>
+										<dt><a href="#" title="摩托罗拉ME525">${cart.sku.item.itemName }</a></dt>
+									</dl>
+								</li>
+								<!-- <li>
+									<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
+									<dl>
+										<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
+										<dd>全球通88初始套餐（预付费）</dd>
+										<dd><span class="red">【赠品】</span>
+											<p class="box_d bg_gray2 gray"><a href="#" title="1、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM">1、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM</a><br /><a href="#" title="2、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM">2、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM</a></p>
+										</dd>
+									</dl>
+								</li>
+								<li>
+									<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
+									<dl>
+										<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
+										<dd>全球通88初始套餐（预付费）</dd>
+									</dl>
+								</li> -->
+							</ul>
+						</td>
+						<td>
+							<c:forEach items="${cart.sku.specValueList }" var="spec">
+								${spec.specValue }
+							</c:forEach>
+						</td>
+						<td>￥${cart.sku.skuPrice }</td>
+						<td>
+							<a href="javascript:void(0);" onclick="reduceNum(${cart.sku.skuId}, ${cart.quantity })" title="减" class="inb arr">-</a><input type="text" class="txts quantity" size="1" name="" value="${cart.quantity }" /><a href="javascript:void(0);" onclick="addNum(${cart.sku.skuId}, ${cart.quantity })" title="加" class="inb arr">+</a></td>
+						<td>￥${cart.sku.skuPrice*cart.quantity }</td>
+						<td class="blue"><a href="javascript:void(0);" onclick="deleteCart(${cart.sku.skuId})" title="删除">删除</a><br /><a href="javascript:void(0);" title="收藏">收藏</a></td>
+					</tr>   
+				</c:forEach>     
 			</tbody>
 			</table>
 
@@ -253,10 +398,10 @@ function trueBuy(){
 				</span>
 				<span class="r box_gray">
 					<dl class="total">
-						<dt>购物车金额小计：<cite>(共<var id="totalNum"><c:out value="${totalItemNum }"/></var>个商品)</cite></dt>
-						<dd><em class="l">商品金额：</em>￥<var id="totalMoney"><fmt:formatNumber value="${totalMoney/100 }" pattern="#0.00"/></var></dd>
+						<dt>购物车金额小计：<cite>(共<var id="totalNum"><c:out value="${itemNum }"/></var>个商品)</cite></dt>
+						<dd><em class="l">商品金额：</em>￥<var id="totalMoney"><fmt:formatNumber value="${totalPrice }" pattern="#0.00"/></var></dd>
 						<dd><em class="l">运费：</em>￥<var><c:out value="0.00"/></var></dd>
-						<dd class="orange"><em class="l">应付总额：</em>￥<var id="totalMoney1"><fmt:formatNumber value="${totalMoney/100 }" pattern="#0.00"/></var></dd>
+						<dd class="orange"><em class="l">应付总额：</em>￥<var id="totalMoney1"><fmt:formatNumber value="${totalPrice }" pattern="#0.00"/></var></dd>
 						<dd class="alg_c"><input id="settleAccountId" type="button" value="结算" class="hand btn136x36a" onclick="trueBuy();"/></dd>
 					</dl>
 				</span>
@@ -280,7 +425,7 @@ function trueBuy(){
 	<a href="javascript:void(0);" id="loginAlertClose" class="close" title="关闭"></a>
 	<div class="cont">
 		<ul class="uls form">
-		<li id="loginAlertError" class="errorTip" style="display:none"></li>
+		<li id="errorName" class="errorTip" style="display:none"></li>
 		<li>
 			<label>帐号类型：</label>
 			<dl class="bg_text" style="z-index:3">
@@ -294,7 +439,7 @@ function trueBuy(){
 		<li>
 			<label>手机号码：</label>
 			<span class="bg_text">
-				<input type="text" maxlength="50" vld="{required:true}" name="loginUserName" id="loginUserName" reg1="^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$" desc="用户名长度不超过50个，必须是邮箱格式！" />
+				<input type="text" maxlength="50" vld="{required:true}" name="loginUserName" id="username" reg1="^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$" desc="用户名长度不超过50个，必须是邮箱格式！" />
 				<em id="userNameLabel" class="def">请输入手机号码</em>
 			</span>
 			<span class="word"><a title="免费注册" href="/ecps-portal/ecps/portal/register.do">免费注册</a></span>
@@ -310,16 +455,16 @@ function trueBuy(){
 			</dl>
 		</li>
 		<li><label>服务密码：</label>
-			<span class="bg_text"><input type="password" vld="{required:true}" maxlength="20" name="loginPassword" id="loginPassword" value="" reg1="^.{6,20}$" desc="密码长度范围为6-20，允许为中英文、数字或特殊字符！" /></span>
+			<span class="bg_text"><input type="password" vld="{required:true}" maxlength="20" name="loginPassword" id="password" value="" reg1="^.{6,20}$" desc="密码长度范围为6-20，允许为中英文、数字或特殊字符！" /></span>
 		</li>
 		<li>
 			<label for="captcha">验 证 码：</label>
 			<span class="bg_text small"><input type="text" vld="{required:true}" maxlength="7" name="loginCaptcha" id="loginCaptcha" value="" reg1="^\w{6}$" desc="验证码不正确" /></span>
-			<img alt="换一张" id="loginCaptchaCode" class="code" onclick="this.src='/ecps-portal/captcha.svl?d='+new Date().getTime();" src="../../res/img/pic/code.png" /><a href="#" onclick="document.getElementById('loginCaptchaCode').src='/ecps-portal/captcha.svl?d='+new Date().getTime();" title="换一张">换一张</a>
+			<img alt="换一张" id="loginCaptchaCode" class="code" onclick="this.src='${path }/user/getImage.do?d='+new Date().getTime();" src="${path }/user/getImage.do" /><a href="#" onclick="document.getElementById('loginCaptchaCode').src='${path }/user/getImage.do?d='+new Date().getTime();" title="换一张">换一张</a>
 		</li>
 		<li class="gray"><label>&nbsp;</label><input type="checkbox" name="">记住我的手机号码</li>
-		<li><label>&nbsp;</label><input type="button" id="loginSubmit" class="hand btn66x23" value="登 录" onclick="loginAjax('/ecps-portal/ecps/portal/item/landingAjax.do');" ><a title="忘记密码？" href="/ecps-portal/ecps/portal/getpwd/getpwd1.do">忘记密码？</a></li>
-		<!--li class="alg_c dev gray">还不是移动商城会员？<a title="免费注册" href="/ecps-portal/ecps/portal/register.do">免费注册</a></li-->
+		<li><label>&nbsp;</label><input type="button" id="loginSubmit" class="hand btn66x23" value="登 录" onclick="loginAjax();" ><a title="忘记密码？" href="/ecps-portal/ecps/portal/getpwd/getpwd1.do">忘记密码？</a></li>
+		<!--li class="alg_c dev gray">还不是移动商城会员？<a title="免费注册" href="/ecps-portal/ecps/portal/register.do">免费注册</a></li   loginAjax('/ecps-portal/ecps/portal/item/landingAjax.do');  -->
 		</ul>
 	</div>
 </div>

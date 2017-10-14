@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.PrintWriter;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -72,6 +73,34 @@ public class EbUserController {
 		session.setAttribute("user", user);*/
 		
 		return "redirect:/item/toIndex.do";
+	}
+	
+	@RequestMapping("/loginAjax.do")
+	public void loginAjax(String username, String password, String loginCaptcha, HttpSession session, PrintWriter out) {
+		
+		//校验验证码
+		String piccode = (String) session.getAttribute("piccode");
+		if(StringUtils.isNotBlank(piccode) && !StringUtils.equalsIgnoreCase(piccode, "")) {
+			if(!piccode.equalsIgnoreCase(loginCaptcha)) {
+				out.write("captchaError");
+				return ;
+			}
+		}
+		
+		//登录查询用户
+		/*password = MD5.GetMD5Code(password);
+		TsPtlUser user = userService.selectUserByUsernameAndPassword(username, password);
+		if(user == null) {
+			out.write("userpasswordError");
+			return ;
+		}
+		session.setAttribute("user", user);*/
+		
+		TsPtlUser user = new TsPtlUser();
+		user.setUsername("付一鸣");
+		session.setAttribute("user", user);
+		
+		out.write("success");
 	}
 	
 	@RequestMapping("/getUser.do")

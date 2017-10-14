@@ -172,8 +172,85 @@ function buy(){
 	window.location.href = "./shop/confirmProductCase.jsp";
 }
 
+//加入购物车
 function addCart(){
-	window.location.href = "./shop/car.jsp";
+	//window.location.href = "./shop/car.jsp";
+	var skuId = null;
+	$(".spec a").each(function(){
+		var clazz = $(this).attr("class");
+		if(clazz == "here"){
+			skuId = $(this).attr("skuId");
+		}
+	});	
+	
+	var quantity = $("#quantity").val();
+	var result = validStock(skuId, quantity);
+	if(result == "no") {
+		alert("库存不足");
+		return;
+	}
+	
+	var cookieResult = validCookie();
+	if(cookieResult == "no") {
+		alert("cookie被禁用，请开启后加入购物车");
+		return;
+	}
+	
+	$.ajax({
+		url:"${path}/cart/addCart.do",
+		type:"post",
+		dataType:"text",
+		data:{
+			skuId:skuId,
+			quantity:quantity
+		},
+		success:function(resp){
+			if(resp == "success") {
+				alert("添加购物车成功");
+			}
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	});
+}
+//校验库存
+function validStock(skuId,quantity) {
+	var result = "yes";
+	$.ajax({
+		url:"${path}/cart/validStock.do",
+		type:"post",
+		dataType:"text",
+		async:false,
+		data:{
+			skuId:skuId,
+			quantity:quantity
+		},
+		success:function(resp){
+			result = resp;
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	});
+	return result;
+}
+//校验cookie是否禁用
+function validCookie() {
+	var result = "yes";
+	$.ajax({
+		url:"${path}/cart/validCookie.do",
+		type:"post",
+		dataType:"text",
+		async:false,
+		success:function(resp){
+			result = resp;
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	});
+	return result;
 }
 </script>
 </head>
@@ -397,7 +474,7 @@ function addCart(){
 	<p class="l"><a href="#" title="商城首页">商城首页</a><samp>|</samp><a href="#" title="我的商城">我的商城</a></p>
 
 	<dl id="cart" class="cart l">
-		<dt><a href="#" title="结算">结算</a>购物车:<b id="">123</b>件</dt>
+		<dt><a href="${path}/cart/listCart.do" title="结算">结算</a>购物车:<b id="">123</b>件</dt>
 		<dd class="hidden">
 			<p class="alg_c hidden">购物车中还没有商品，赶紧选购吧！</p>
 			<h3 title="最新加入的商品">最新加入的商品</h3>
@@ -699,7 +776,7 @@ function addCart(){
 								</#if>
 						</#list>
 					</div></li>
-					<li><label>我 要 买：</label><a href="javascript:void(0);" class="inb sub"></a><input readonly type="text" name="" value="1" class="num" size="3" /><a href="javascript:void(0);" class="inb add"></a><em id="sub_add_msg" class="red"></em></li>
+					<li><label>我 要 买：</label><a href="javascript:void(0);" class="inb sub"></a><input id="quantity" readonly type="text" name="" value="1" class="num" size="3" /><a href="javascript:void(0);" class="inb add"></a><em id="sub_add_msg" class="red"></em></li>
 					<li class="submit">
 					<input id="buyNow" type="button" value="" class="hand btn138x40" onclick="buy();"/>
 					<input id="addMyCart" type="button" value="" class="hand btn138x40b" onclick="addCart()"/>

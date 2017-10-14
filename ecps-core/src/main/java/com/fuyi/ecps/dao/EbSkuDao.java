@@ -9,4 +9,6 @@ public interface EbSkuDao {
 	void saveSku(List<EbSku> skuList, long itemId);
 	
 	EbSku getSkuById(Long skuId);
+	
+	EbSku getSkuDetailById(Long skuId);
 }

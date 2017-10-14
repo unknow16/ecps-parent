@@ -18,6 +18,8 @@ import com.fuyi.ecps.model.EbParaValue;
 import com.fuyi.ecps.model.EbSku;
 import com.fuyi.ecps.model.QueryCondition;
 import com.fuyi.ecps.service.EbItemService;
+import com.fuyi.ecps.stub.EbWSItemService;
+import com.fuyi.ecps.stub.EbWSItemServiceService;
 import com.fuyi.ecps.utils.Page;
 
 @Service
@@ -82,6 +84,15 @@ public class EbItemServiceImpl implements EbItemService {
 
 	public EbItem selectItemDetailById(Long itemId) {
 		return itemDao.selectItemDetailById(itemId);
+	}
+
+	public String publishItem(Long itemId, String password) {
+		//创建服务访问点集合的对象
+		EbWSItemServiceService wsItemServiceService = new EbWSItemServiceService();
+		//获取服务访问点绑定的类，使用服务访问点的name的值前面的get方法 getEbWSItemServicePort
+		EbWSItemService wsItemService = wsItemServiceService.getEbWSItemServicePort();
+		
+		return wsItemService.publishItem(itemId, password);
 	}
 
 }

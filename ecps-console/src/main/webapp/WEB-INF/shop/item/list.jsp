@@ -81,6 +81,30 @@ $(function(){
 	$("#selectPage").val(pageNo);
 })
 
+function publish(itemId) {
+	tipShow("#importLoadDiv");
+	
+	$.ajax({
+		url:"${path}/item/publishItem.do",
+		type:"post",
+		dataType:"text",
+		data:{
+			itemId:itemId
+		},
+		success:function(respText){
+			if(respText == "success") {
+				alert("发布成功");
+			} else {
+				alert("发步失败");
+			}
+			tipHide("#importLoadDiv");
+		},
+		error:function(){
+			alert("系统错误");
+		}
+	});
+}
+
 </script>
 </head>
 <body id="main">
@@ -183,6 +207,7 @@ $(function(){
 					  			<a href="/ecps-console/ecps/console/item/editItem.do?type=1&itemId=2384">编辑</a>
 					  			<a href="javascript:void(0);" onclick="singleDel('2384')">删除</a>
 					  			<a href="javascript:void(0);" group="2384,0" itemId=3184 showStatus="0">上架</a>
+					  			<a href="javascript:void(0);" onclick="publish(${item.itemId})">发布</a>
 					  		
 					  		
 					  			

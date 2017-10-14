@@ -21,7 +21,6 @@
 		<jaxws:serviceBean>
 			<bean class="com.fuyi.ecps.ws.service.impl.EbWSItemServiceImpl"></bean>
 		</jaxws:serviceBean>
-		
 	</jaxws:server>
             
 </beans>
