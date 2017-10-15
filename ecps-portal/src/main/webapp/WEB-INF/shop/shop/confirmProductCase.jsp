@@ -22,6 +22,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
 <link rel="stylesheet" href="${path }/res/css/style.css" />
 <script src="../res/js/jquery.js"></script>
+<script type="text/javascript">var path = "${path}";</script>
+<script src="${path }/res/js/getUser.js"></script>
 <script src="../res/js/com.js"></script>
 <script type="text/javascript">
 $(function(){
@@ -57,6 +59,8 @@ $(function(){
 		var val = $(this).val();
 		if(val == 'add'){
 			$('#addAddress').fadeIn('slow');
+		} else {
+			$('#addAddress').hide(500);
 		}
 	});
 
@@ -183,7 +187,7 @@ function trueBuy(){
 <li title="2.填写核对订单信息" class="here">3.填写核对订单信息</li>
 <li title="4.成功提交订单">4.成功提交订单</li>
 </ul>
-<form action="./confirmProductCase2.jsp" method="post">
+<form action="${path }/order/submitOrder.do" method="post">
 
 
 <div class="w ofc case">
@@ -216,10 +220,22 @@ function trueBuy(){
 			<h3 title="常用地址">常用地址</h3>
 			<div class="box_d bg_gray2 ofc">
 				<table cellspacing="0" summary="" id="adrList" class="tab">
+				<c:forEach items="${addrList }" var="addr">
+					<tr>
+					<td colspan="4"><input type="radio" value="${addr.shipAddrId }" name="address"
+						<c:if test="${addr.defaultAddr == 1 }">
+							checked="checked"
+						</c:if>
+					 />
+					${addr.province }&nbsp;${addr.city }&nbsp;${addr.district }&nbsp;${addr.addr }&nbsp;${addr.phone }&nbsp;${addr.shipName }
+					</td>
+					</tr>
+				</c:forEach>
 				
 				<tr>
 				<td colspan="4"><input type="radio" value="add" name="address" />新增收货地址</td>
 				</tr>
+				
 				</table>
 			</div>
 		</dd>
@@ -317,25 +333,61 @@ function trueBuy(){
 		<tr>
 		<th>商品编号</th>
 		<th class="wp">商品名称</th>
+		<th>规格</th>
 		<th>商品价格（元）</th>
 		<th>数量</th>
 		<th>小计（元）</th>
 		</tr>                                                                                           
 		</thead>
 		<tbody>
+		
+			<c:forEach items="${cartList }" var="cart">
+					<tr>
+						<td>${cart.sku.item.itemNo }</td>
+						<td class="nwp pic">
+							<ul class="uls">
+								<li>
+									<a href="#" title="摩托罗拉ME525" class="pic"><img src="${file_path }${cart.sku.item.imgs }" alt="摩托罗拉ME525" /></a>
+									<dl>
+										<dt><a href="#" title="摩托罗拉ME525">${cart.sku.item.itemName }</a></dt>
+									</dl>
+								</li>
+								<!-- <li>
+									<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
+									<dl>
+										<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
+										<dd>全球通88初始套餐（预付费）</dd>
+										<dd><span class="red">【赠品】</span>
+											<p class="box_d bg_gray2 gray"><a href="#" title="1、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM">1、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM</a><br /><a href="#" title="2、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM">2、三星（SAMSUNG）i900 3G手机（黑色）WCDMA/GSM</a></p>
+										</dd>
+									</dl>
+								</li>
+								<li>
+									<a href="#" title="摩托罗拉ME525" class="pic"><img src="../../res/img/pic/p50x50.jpg" alt="摩托罗拉ME525" /></a>
+									<dl>
+										<dt><a href="#" title="摩托罗拉ME525">摩托罗拉ME525</a></dt>
+										<dd>全球通88初始套餐（预付费）</dd>
+									</dl>
+								</li> -->
+							</ul>
+						</td>
+						<td>
+							<c:forEach items="${cart.sku.specValueList }" var="spec">
+								${spec.specValue }
+							</c:forEach>
+						</td>
+						<td>￥${cart.sku.skuPrice }</td>
+						<td>
+							<input type="text" class="txts quantity" size="1" name="" value="${cart.quantity }" />
+						</td>
+						<td>￥${cart.sku.skuPrice*cart.quantity }</td>
+					</tr>   
+				</c:forEach>   
+				
+				
 		<tr>
-		<td>${sku.item.itemNo }</td>
-		<td class="img48x20">
-			<span class="inb"><img src="${upload }${sku.item.imgSize1 }" /></span>
-			<a href="#" title="1381050188" class="b f20">${sku.item.itemName }</a>
-		</td>
-		<td>￥${sku.skuPrice }</td>
-		<td>${buyNum }</td>
-		<td class="orange">￥${sku.skuPrice*buyNum }</td>
-		</tr>
-		<tr>
-			<th colspan="5" class="alg_r">
-				<b>金额总计：</b><var class="orange">￥${sku.skuPrice*buyNum }</var>
+			<th colspan="6" class="alg_r">
+				<b>金额总计：</b><var class="orange">￥${totalPrice }</var>
 			</th>
 		</tr>
 		</tbody>
@@ -355,14 +407,13 @@ function trueBuy(){
 				<c:if test="${temp==null }">
 					<input id="d1" type="hidden" name="d1" value="1"/>
 				</c:if>
+				
+				<input type="hidden" name="orderSum" value="${totalPrice }">
 				<dl class="total">
-					<input type="hidden" name="orderSum" value="${sku.skuPrice*buyNum }"/>
-					<input type="hidden" name="skuId" value="${sku.skuId }"/>
-					<input type="hidden" name="buyNum" value="${buyNum }"/>
-					<dt>最终订单金额：<cite>(共<var id="totalNum"><c:out value="${totalItemNum }"/></var>个商品)</cite></dt>
-					<dd><em class="l">商品金额：</em>￥<var><fmt:formatNumber value="${totalMoney/100}" pattern="#0.00"/></var></dd>
+					<dt>最终订单金额：<cite>(共<var id="totalNum"><c:out value="${itemNum }"/></var>个商品)</cite></dt>
+					<dd><em class="l">商品金额：</em>￥<var><fmt:formatNumber value="${totalPrice}" pattern="#0.00"/></var></dd>
 					<dd><em class="l">运费：</em>￥<var><c:out value="0.00"/></var></dd>
-					<dd class="orange"><em class="l">应付总额：</em>￥<var id="totalMoney"><fmt:formatNumber value="${sku.skuPrice*buyNum }" pattern="#0.00"/></var></dd>
+					<dd class="orange"><em class="l">应付总额：</em>￥<var id="totalMoney"><fmt:formatNumber value="${totalPrice }" pattern="#0.00"/></var></dd>
 					<dd class="alg_c"><input id="submitOrderID" type="submit" value="结 算" class="hand btn136x36a" "/></dd>
 				</dl>
 			</div>

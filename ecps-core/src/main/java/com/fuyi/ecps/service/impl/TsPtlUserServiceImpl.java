@@ -12,18 +12,15 @@ import com.fuyi.ecps.service.TsPtlUserService;
 
 @Service
 public class TsPtlUserServiceImpl implements TsPtlUserService {
-	
+
 	@Autowired
 	private TsPtlUserDao userDao;
-
-	public TsPtlUser selectUserByUsernameAndPassword(String username, String password) {
+	
+	public TsPtlUser selectUserByUserIdAndPassword(String username,String password) {
 		Map<String, String> map = new HashMap<String, String>();
-		
 		map.put("username", username);
 		map.put("password", password);
-		
-		TsPtlUser user = userDao.selectUserByUsernameAndPassword(map);
-		return user;
+		return userDao.selectUserByUserIdAndPassword(map);
 	}
-
+	
 }

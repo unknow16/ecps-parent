@@ -1,6 +1,5 @@
 package com.fuyi.ecps.service.impl;
 
-import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;

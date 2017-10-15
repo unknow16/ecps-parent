@@ -43,7 +43,49 @@ $(function(){
 		tipShow('#transitAlert');
 	});
 	
+	$("#jvForm").submit(function(){
+		var count = $("#addrListCount").val();
+		var shipAddrId = $("#shipAddrId").val();
+		if(count >= '5' && (shipAddrId == null || shipAddrId == "")) {
+			alert("收货地址最多5个");
+			return false;
+		} else {
+			return true;
+		}
+	});
+	
 });
+
+function modify(shipAddrId) {
+	$.ajax({
+		url:"${path}/user/login/getShipAddrById.do",
+		type:"post",
+		dataType:"text",
+		data:{
+			shipAddrId:shipAddrId
+		},
+		success:function(respText) {
+			var jsonObj = $.parseJSON(respText);
+			var addr = jsonObj.addr;
+			$("#shipAddrId").val(addr.shipAddrId);
+			$("#shipName").val(addr.shipName);
+			$("#province").val(addr.province);
+			$("#city").val(addr.city);
+			$("#district").val(addr.district);
+			$("#addr").val(addr.addr);
+			$("#zipCode").val(addr.zipCode);
+			$("#phone").val(addr.phone);
+			if(addr.defaultAddr == 1) {
+				$("#defaultAddr").attr("checked", "checked");
+			} else {
+				$("#defaultAddr").removeAttr("checked");
+			}
+		},
+		error:function() {
+			alert("系统错误");
+		}
+	});
+}
 </script>
 </head>
 <body>
@@ -361,74 +403,58 @@ $(function(){
 				</tr>                                                          
 				</thead>
 				<tbody>
-				<tr>
-				<td>王强</td>
-				<td>北京 北京市 海淀区</td>
-				<td>XXX大道XXX号XX室</td>
-				<td>100081</td>
-				<td>13750532806</td>
-				<td class="def"><a href="javascript:void(0);" title="设为默认">设为默认</a></td>
-				<td><a href="javascript:void(0);" title="修改" onclick="modify('1')" class="blue">[修改]</a><a href="javascript:void(0);" title="删除" onclick="del(this)" class="blue">[删除]</a></td>                  
-				</tr>
-				<tr class="here">
-				<td>王强</td>
-				<td>北京 北京市 海淀区</td>
-				<td>XXX大道XXX号XX室</td>
-				<td>100081</td>
-				<td>13750532806</td>
-				<td class="def blue">设为默认</td>
-				<td><a href="javascript:void(0);" title="修改" onclick="modify('1')" class="blue">[修改]</a><a href="javascript:void(0);" title="删除" onclick="del(this)" class="blue">[删除]</a></td>
-				</tr>
-					<tr>
-				<td>王强</td>
-				<td>北京 北京市 海淀区</td>
-				<td>XXX大道XXX号XX室</td>
-				<td>100081</td>
-				<td>13750532806</td>
-				<td class="def"><a href="javascript:void(0);" title="设为默认">设为默认</a></td>
-				<td><a href="javascript:void(0);" title="修改" onclick="modify('1')" class="blue">[修改]</a><a href="javascript:void(0);" title="删除" onclick="del(this)" class="blue">[删除]</a></td>                  
-				</tr>
-					<tr>
-				<td>王强</td>
-				<td>北京 北京市 海淀区</td>
-				<td>XXX大道XXX号XX室</td>
-				<td>100081</td>
-				<td>13750532806</td>
-				<td class="def"><a href="javascript:void(0);" title="设为默认">设为默认</a></td>
-				<td><a href="javascript:void(0);" title="修改" onclick="modify('1')" class="blue">[修改]</a><a href="javascript:void(0);" title="删除" onclick="del(this)" class="blue">[删除]</a></td>                  
-				</tr>
+				
+				<c:forEach items="${addrList }" var="addr">
+					<tr 
+						<c:if test="${addr.defaultAddr == 1 }">class='here'</c:if>
+					>
+					<td>${addr.shipName }</td>
+					<td>${addr.province }&nbsp;${addr.city }&nbsp;${addr.district }</td>
+					<td>${addr.addr }</td>
+					<td>${addr.zipCode }</td>
+					<td>${addr.phone }</td>
+					<td class="def blue"><a href="${path }/user/login/updateDefaultAddr.do?shipAddrId=${addr.shipAddrId}" >设为默认</a></td>
+					<td><a href="javascript:void(0);" title="修改" onclick="modify(${addr.shipAddrId})" class="blue">[修改]</a><a href="javascript:void(0);" title="删除" onclick="del(this)" class="blue">[删除]</a></td>
+					</tr>
+				</c:forEach>
+					
 				</tbody>
 				</table>
 
 				<h3 class="h3_r">新增/修改收货地址<span>手机、固定电话选填一项，其余均为必填</span></h3>
 
-				<form id="jvForm" action="profile.do" method="post">
-					<input type="hidden" name="returnUrl" value="${returnUrl}"/>
-					<input type="hidden" name="processUrl" value="${processUrl}"/>
+				<input type="hidden" id="addrListCount" value="${fn:length(addrList) }">
+				<form id="jvForm" action="${path }/user/login/insertOrUpdateAddr.do" method="post">
+					<%-- <input type="hidden" name="returnUrl" value="${returnUrl}"/>
+					<input type="hidden" name="processUrl" value="${processUrl}"/> --%>
+					<input id="shipAddrId" type="hidden" name="shipAddrId" />
 					<ul class="uls form">
 					<li id="errorName" class="errorTip" style="display:none">${error}</li>
 					<li>
 						<label for="username"><samp>*</samp>收货人姓名：</label>
-						<span class="bg_text"><input type="text" id="username" name="username" vld="{required:true}" maxLength="100" /></span>
+						<span class="bg_text"><input type="text" id="shipName" name="shipName" vld="{required:true}" maxLength="100" /></span>
 						<span class="pos"><span class="tip okTip">&nbsp;</span></span>
 					</li>
 					<li>
 						<label for="residence"><samp>*</samp>地　　址：</label>
 						<span class="word">
-						<select name="">
+						<select id="province" name="province">
 							<option value="" selected>省/直辖市</option>
-							<option value=""></option>
-						</select><select name="">
+							<option value="河南省">河南省</option>
+							<option value="河北省">河北省</option>
+						</select><select id="city" name="city">
 							<option value="" selected>城市</option>
-							<option value=""></option>
-						</select><select name="">
+							<option value="郑州市">郑州市</option>
+							<option value="南阳市">南阳市</option>
+						</select><select id="district" name="district">
 							<option value="" selected>县/区</option>
-							<option value=""></option>
+							<option value="郑东新区">郑东新区</option>
+							<option value="金水区">金水区</option>
 						</select></span>
 					</li>
 					<li>
 						<label for="nick"><samp>*</samp>街道地址：</label>
-						<span class="bg_text"><input type="text" id="nick" name="nick" maxLength="32" vld="{required:true}" /></span>
+						<span class="bg_text"><input type="text" id="addr" name="addr" maxLength="32" vld="{required:true}" /></span>
 						<span class="pos"><span class="tip errorTip">用户名为4-20位字母、数字或中文组成，字母区分大小写。</span></span>
 					</li>
 					<li>
@@ -437,12 +463,12 @@ $(function(){
 					</li>
 					<li>
 						<label for="telphone"><samp>*</samp>联系电话：</label>
-						<span class="bg_text"><input type="text" id="telphone" name="telphone" maxLength="32" vld="{required:true}" /></span>
+						<span class="bg_text"><input type="text" id="phone" name="phone" maxLength="32" vld="{required:true}" /></span>
 						<span class="pos"><span class="tip warningTip">用户名为4-20位字母、数字或中文组成，字母区分大小写。</span></span>
 					</li>
 					<li>
 						<label for="statusAddr">&nbsp;</label>
-						<span><input type="checkbox" name="statusAddr" />设为默认收货地址</span>
+						<span><input id="defaultAddr" type="checkbox" name="defaultAddr" value="1" />设为默认收货地址</span>
 					</li>
 					<li><label for="">&nbsp;</label><input type="submit" value="保存" class="hand btn66x23" /></li>
 					</ul>

@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -20,8 +21,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fuyi.ecps.model.EbShipAddr;
 import com.fuyi.ecps.model.TsPtlUser;
-import com.fuyi.ecps.service.EbItemService;
+import com.fuyi.ecps.service.EbShipAddrService;
 import com.fuyi.ecps.service.TsPtlUserService;
 import com.fuyi.ecps.utils.ECPSUtils;
 import com.fuyi.ecps.utils.MD5;
@@ -32,6 +34,9 @@ public class EbUserController {
 	
 	@Autowired
 	private TsPtlUserService userService;
+	
+	@Autowired
+	private EbShipAddrService shipAddrService;
 	
 	@RequestMapping("/toLogin.do")
 	public String toLogin() {
@@ -61,16 +66,12 @@ public class EbUserController {
 		
 		//登录查询用户
 		password = MD5.GetMD5Code(password);
-		TsPtlUser user = userService.selectUserByUsernameAndPassword(username, password);
+		TsPtlUser user = userService.selectUserByUserIdAndPassword(username, password);
 		if(user == null) {
 			model.addAttribute("tip", "userpasswordError");
 			return "passport/login";
 		}
 		session.setAttribute("user", user);
-		
-/*		TsPtlUser user = new TsPtlUser();
-		user.setUsername("付一鸣");
-		session.setAttribute("user", user);*/
 		
 		return "redirect:/item/toIndex.do";
 	}
@@ -88,16 +89,12 @@ public class EbUserController {
 		}
 		
 		//登录查询用户
-		/*password = MD5.GetMD5Code(password);
-		TsPtlUser user = userService.selectUserByUsernameAndPassword(username, password);
+		password = MD5.GetMD5Code(password);
+		TsPtlUser user = userService.selectUserByUserIdAndPassword(username, password);
 		if(user == null) {
 			out.write("userpasswordError");
 			return ;
 		}
-		session.setAttribute("user", user);*/
-		
-		TsPtlUser user = new TsPtlUser();
-		user.setUsername("付一鸣");
 		session.setAttribute("user", user);
 		
 		out.write("success");
@@ -113,14 +110,54 @@ public class EbUserController {
 		ECPSUtils.printJSON(jsonObject.toString(), resp);
 	}
 	
+	/**
+	 * 去我的商城首页
+	 * @return
+	 */
 	@RequestMapping("/login/toPerson.do")
 	public String toPerson() {
 		return "person/index";
 	}
 	
+	/**
+	 * 去我的收货地址管理
+	 * @return
+	 */
 	@RequestMapping("/login/toDeliverAddress.do")
-	public String toDeliverAddress() {
+	public String toDeliverAddress(HttpSession session, Model model) {
+		TsPtlUser user = (TsPtlUser) session.getAttribute("user");
+		List<EbShipAddr> addrList = shipAddrService.selectAddrByUserId(user.getPtlUserId());
+		model.addAttribute("addrList", addrList);
 		return "person/deliverAddress";
+	}
+	
+	@RequestMapping("/login/getShipAddrById.do")
+	public void getShipAddrById(HttpServletResponse resp, Long shipAddrId) {
+		EbShipAddr addr = shipAddrService.getShipAddrById(shipAddrId);
+		
+		JSONObject jo = new JSONObject();
+		jo.accumulate("addr", addr);
+		
+		ECPSUtils.printJSON(jo.toString(), resp);
+	}
+	
+	@RequestMapping("/login/insertOrUpdateAddr.do")
+	public String insertOrUpdateAddr(EbShipAddr addr, HttpSession session) {
+		TsPtlUser user = (TsPtlUser) session.getAttribute("user");
+		addr.setPtlUserId(user.getPtlUserId());
+		if(addr.getDefaultAddr() == null) {
+			addr.setDefaultAddr((short)0);
+		}
+		shipAddrService.saveOrUpdateAddr(addr);
+		
+		return "redirect:toDeliverAddress.do"; //"redirect:/user/login/toDeliverAddress.do";
+	}
+	
+	@RequestMapping("/login/updateDefaultAddr.do")
+	public String updateDefaultAddr(Long shipAddrId, HttpSession session) {
+		TsPtlUser user = (TsPtlUser) session.getAttribute("user");
+		shipAddrService.updateDefaultAddr(shipAddrId, user.getPtlUserId());
+		return "redirect:toDeliverAddress.do";
 	}
 	
 	@RequestMapping("/login/toMyOrders.do")
