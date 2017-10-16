@@ -154,13 +154,19 @@ $(function(){
 	<div class="confirm">
 		<div class="tl"></div><div class="tr"></div>
 		<div class="ofc">
-			
-			<p class="okMsg">您的订单已成功提交，完成支付后，我们将立即发货！</p>
+			<c:choose>
+				<c:when test="${tip == 'stock_error' }">
+					<p class="noMsg">对不起，您的货被抢光了！</p>
+				</c:when>
+				<c:otherwise>
+					<p class="okMsg">您的订单已成功提交，完成支付后，我们将立即发货！</p>
+				</c:otherwise>
+			</c:choose>
 
 			<table cellspacing="0" summary="" class="tab tab5">
 			<tr>
 			<th>您的订单号</th>
-			<td><var class="blue"><b>84733607</b></var></td>
+			<td><var class="blue"><b>${order.orderNum }</b></var></td>
 			<th>应付现金</th>
 			<td><var class="red"><b>￥3599.00</b></var>&nbsp;元</td>
 			<th>支付方式</th>

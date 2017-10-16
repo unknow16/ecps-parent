@@ -361,4 +361,9 @@
 	and es.sku_id = ev.sku_id(+)
 	and es.sku_id = #{skuId}
   </select>
+  
+  <update id="updateStock" parameterType="map">
+  	update eb_sku t set t.stock_inventory = t.stock_inventory - #{quantity}
+  	where t.sku_id = #{skuId} and t.stock_inventory >= #{quantity}
+  </update>
 </mapper>

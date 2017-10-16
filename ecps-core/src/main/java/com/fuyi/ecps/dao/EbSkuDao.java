@@ -1,6 +1,7 @@
 package com.fuyi.ecps.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fuyi.ecps.model.EbSku;
 
@@ -11,4 +12,6 @@ public interface EbSkuDao {
 	EbSku getSkuById(Long skuId);
 	
 	EbSku getSkuDetailById(Long skuId);
+	
+	int updateStock(Map<String, Object> map);
 }

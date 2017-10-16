@@ -1,6 +1,7 @@
 package com.fuyi.ecps.dao.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
@@ -38,6 +39,10 @@ public class EbSkuDaoImpl extends SqlSessionDaoSupport implements EbSkuDao {
 
 	public EbSku getSkuDetailById(Long skuId) {
 		return this.getSqlSession().selectOne(ns + "selectSkuDetailById", skuId);
+	}
+
+	public int updateStock(Map<String, Object> map) {
+		return this.getSqlSession().update(ns + "updateStock", map);
 	}
 
 

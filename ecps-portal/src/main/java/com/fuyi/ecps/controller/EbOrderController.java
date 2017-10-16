@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fuyi.ecps.exception.EbStockException;
 import com.fuyi.ecps.model.EbCart;
 import com.fuyi.ecps.model.EbOrder;
 import com.fuyi.ecps.model.EbOrderDetail;
@@ -26,14 +27,10 @@ import com.fuyi.ecps.model.TsPtlUser;
 import com.fuyi.ecps.service.EbCartService;
 import com.fuyi.ecps.service.EbOrderService;
 import com.fuyi.ecps.service.EbShipAddrService;
-import com.fuyi.ecps.service.EbSkuService;
 
 @RequestMapping("/order")
 @Controller
 public class EbOrderController {
-	
-	@Autowired
-	private EbSkuService skuService;
 	
 	@Autowired
 	private EbCartService cartService;
@@ -71,13 +68,15 @@ public class EbOrderController {
 	}
 	
 	@RequestMapping("/submitOrder.do")
-	public String submitOrder(EbOrder order, String address,HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception, Exception {
+	public String submitOrder(EbOrder order, String address,
+			HttpServletResponse response, HttpServletRequest request, 
+			HttpSession session, Model model) throws Exception, Exception {
 		TsPtlUser user = (TsPtlUser) session.getAttribute("user");
 		if(user != null) {
 			order.setPtlUserId(user.getPtlUserId());
 			order.setUsername(user.getUsername());
 		}
-		order.setOrderNum(new SimpleDateFormat().format(new Date()));
+		order.setOrderNum(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 		
 		if(!StringUtils.equals("add", address)) {
 			EbShipAddr addr = shipAddrService.getShipAddrById(new Long(address));
@@ -105,7 +104,14 @@ public class EbOrderController {
 			orderDetail.setMarketPrice(cart.getSku().getMarketPrice());
 			orderDetailList.add(orderDetail);
 		}
-		orderService.saveOrder(order, orderDetailList, response, request);
+		try {
+			orderService.saveOrder(order, orderDetailList, response, request);
+			model.addAttribute("order", order);
+		} catch (Exception e) {
+			if(e instanceof EbStockException ) {
+				model.addAttribute("tip", "stock_error");
+			}
+		}
 		return "shop/confirmProductCase2";
 	}
 }
