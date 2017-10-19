@@ -1,4 +1,6 @@
 ## 电商项目
+
+### 常见问题
 * jersey.api.client.UniformInterfaceException ：returned a response status of 403 Forbidden
 * 一直报错：
 后来定位到 put的地方：
@@ -13,3 +15,6 @@
 
 * 409
 	* tomcat服务器下没创建upload文件夹
+
+### 部署图
+* ![deploy img](https://github.com/unknow16/ecps-parent/raw/master/deploy.png)
