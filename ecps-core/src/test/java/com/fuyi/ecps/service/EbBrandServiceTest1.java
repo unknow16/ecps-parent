@@ -24,6 +24,9 @@ public class EbBrandServiceTest1 {
 	
 	@Autowired
 	private EbItemService itemService;
+	
+	@Autowired
+	private FlowService flowService;
 
 	@Test
 	public void testSaveBrand() {
@@ -44,6 +47,11 @@ public class EbBrandServiceTest1 {
 		map.put("item", item);
 		FMUtils fm = new FMUtils();
 		fm.outputFile("productDetail.ftl", item.getItemId() + ".html", map);
+	}
+	
+	@Test
+	public void deployFlowTest() {
+		flowService.deployFlow();
 	}
 
 	@Test

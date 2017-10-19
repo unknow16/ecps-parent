@@ -4,8 +4,8 @@
 <h2 title="订单管理"><samp class="t03"></samp>订单管理</h2>
 <ul class="ul">
 
-<li><a href="${path}/shop/order/orderPay/orderPay.jsp?orderState=29,27&up2=1"><samp class="t05"></samp>待付款单</a></li>
-<li><a href="${path}/order/orderCall.do?orderState=1,21,30,31"><samp class="t05"></samp>外呼单</a></li>
+<li><a href="${path}/order/listNoPay.do?isCall=0&assignee=noPaidOrderer"><samp class="t05"></samp>待付款单</a></li>
+<li><a href="${path}/order/listOrderCall.do?assignee=paidOrderer"><samp class="t05"></samp>已付款单</a></li>
 <li><a href="${path}/order/orderStock.do?orderState=2"><samp class="t05"></samp>备货单</a></li>
 <li><a href="${path}/order/orderCrm.do?orderState=3"><samp class="t05"></samp>CRM单</a></li>
 <li><a href="${path}/order/orderDelivery1.do?orderState=6,32"><samp class="t05"></samp>配送单</a></li>

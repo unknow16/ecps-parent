@@ -36,10 +36,13 @@ public class EbCartController {
 		Integer itemNum = 0;
 		BigDecimal totalPrice = new BigDecimal(0);
 		for (EbCart ebCart : cartList) {
+			if(ebCart.getSku() != null) {
+				
 			itemNum = itemNum + ebCart.getQuantity();
 			totalPrice = totalPrice
 					.add(ebCart.getSku().getSkuPrice()
 					.multiply(new BigDecimal(ebCart.getQuantity())));
+			}
 		}
 		model.addAttribute("itemNum", itemNum);
 		model.addAttribute("totalPrice", totalPrice);
@@ -111,5 +114,11 @@ public class EbCartController {
 	public void validCart(HttpServletRequest request, HttpServletResponse response) {
 		String result = cartService.validCart(request, response);
 		ECPSUtils.printJSON(result, response);
+	}
+	
+	@RequestMapping("/clearCart.do")
+	public String clearCart(HttpServletRequest request, HttpServletResponse response) {
+		cartService.clearCart(request, response);
+		return "redirect:listCart.do";
 	}
 }

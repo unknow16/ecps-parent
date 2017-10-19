@@ -32,14 +32,15 @@ $(function(){
 	$(".sub1").click(function(){
 	    tipShow('#addItemNote');
 	});
-	$("#confirmDivOk").bind("click",function(){
+/* 	$("#confirmDivOk").bind("click",function(){
 		var a=$("#myForm");
 		a.append('<input type="hidden" name="r" value="'+obj.val()+'">');
 		a.submit();
-	});
+	}); */
 	$("input[id='addItemNoteConfirm']").click(function(){
 		var orderId = $("#orderId").val();
-		window.location.href="${path}/order/flowOrder.do?orderId="+orderId+"&orderState=0"; 
+		alert(orderId);
+		window.location.href="${path}/order/callOrder.do?orderId="+orderId;
 	});
 });
 function getBzqd(spid) {
@@ -80,13 +81,18 @@ function getBzqd(spid) {
 					<input type="hidden" id="orderId" value="${order.orderId }">
 
 					<div class="sch page_c">
-						<span class="l">订单号：<b class="red"><var>${order.orderNum}</var></b>&nbsp;&nbsp;&nbsp;下单时间：<var><fmt:formatDate value="${order.orderTime}"pattern="yyyy-MM-dd HH:mm:ss" /></var>&nbsp;&nbsp;&nbsp;<b class="f14 blue"><ui:orderModule var="${ebco.ebOrder.orderState}" type="15"/></b>&nbsp;&nbsp;&nbsp; 
-						
-						<c:if test="${order.orderState == 1 }">
-							<input name="r" type="button" id="completeCall" class="pointer sub1 red" value="外呼完成" /> 
-						</c:if>
-						
-						<input type="hidden" id="why"/>
+						<span class="l">订单号：
+						<b class="red"><var>${order.orderNum}</var></b>&nbsp;&nbsp;&nbsp;
+						下单时间：<var><fmt:formatDate value="${order.orderTime}" pattern="yyyy-MM-dd HH:mm:ss" /></var>&nbsp;&nbsp;&nbsp;
+						<b class="f14 blue">
+							<ui:orderModule var="${ebco.ebOrder.orderState}" type="15"/>
+						</b>&nbsp;&nbsp;&nbsp; 
+							
+							<c:if test="${order.isCall == 0 }">
+								<input name="r" type="button" id="completeCall" class="pointer sub1 red" value="外呼完成" /> 
+							</c:if>
+							
+							<input type="hidden" id="why"/>
 						</span>
 					</div>
 
@@ -193,10 +199,10 @@ function getBzqd(spid) {
 			<tr>
 				<th>收货地址：</th>
 				<td class="nwp" colspan="5">
-				<c:if test="${ebco.ebOrder.province != ' '}">${order.province}&nbsp;</c:if>
-				<c:if test="${ebco.ebOrder.city != ' '}">${order.city}&nbsp;</c:if>
-				<c:if test="${ebco.ebOrder.district != ' '}">${order.district}&nbsp;</c:if>
-				<c:out value="${ebco.ebOrder.addr}"></c:out>
+				${order.province}&nbsp;
+				${order.city}&nbsp;
+				${order.district}&nbsp;
+				${order.addr }
 				</td>
 			</tr>
 			<tr>
@@ -217,7 +223,7 @@ function getBzqd(spid) {
 					<th>数量</th>
 					<th>串号</th>
 				</tr>
-				<c:forEach items="${order.orderDetailList}" var="orderDetail">
+				<c:forEach items="${order.detailList}" var="orderDetail">
 				<tr>
 					<td>${orderDetail.itemNo}</td>
 					<td class="nwp">${orderDetail.itemName}</td>
@@ -255,8 +261,8 @@ function getBzqd(spid) {
 		<c:if test="${order.isPaid == 0 }">未付</c:if>
 			<c:if test="${order.isPaid == 1 }">已付</c:if>
 		</td></tr>
-		<tr><th width="12%">付款时间：</th><td><var><fmt:formatDate value="${ebco.ebOrder.payTime}"pattern="yyyy-MM-dd HH:mm:ss" /></var></td></tr>
-		<tr><th width="12%">到账时间：</th><td><var><fmt:formatDate value="${ebco.ebOrder.depositTime}"pattern="yyyy-MM-dd" /></var></td></tr>
+		<tr><th width="12%">付款时间：</th><td><var><fmt:formatDate value="${ebco.ebOrder.payTime}" pattern="yyyy-MM-dd HH:mm:ss" /></var></td></tr>
+		<tr><th width="12%">到账时间：</th><td><var><fmt:formatDate value="${ebco.ebOrder.depositTime}" pattern="yyyy-MM-dd" /></var></td></tr>
 	</table>
 </div>		
 

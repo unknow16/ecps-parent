@@ -487,6 +487,9 @@
 					and c.item_name like '%${itemName}%'
 				</if>
 	          </where>
+	          order by c.item_id desc
+	          
+	          
 	          <![CDATA[
 	          ) a
 	         where rownum < #{endNum} ) b

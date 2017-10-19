@@ -21,7 +21,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="search" type="application/opensearchdescription+xml" href="../opensearch.xml" title="移动购物" />
 <link rel="stylesheet" href="${path }/res/css/style.css" />
-<script src=${path }/res/js/jquery.js"></script>
+<script src="${path }/res/js/jquery.js"></script>
 <script type="text/javascript">var path = "${path}";</script>
 <script src="${path }/res/js/getUser.js"></script>
 <script src="${path }/res/js/com.js"></script>
@@ -32,8 +32,32 @@ $(function(){
 		tipShow('#loginAlert');
 	});
 
-	$("#promptAlertIs,#payAlertIs").click(function(){
+	/* $("#promptAlertIs,#payAlertIs").click(function(){
 		tipShow('#promptAlert');
+	}); */
+	
+	$("#payAlertIs").click(function(){
+		alert(1);
+		var processInstanceId = $("#processInstanceId").val();
+		var orderId = $("#orderId").val();
+		 $.ajax({
+			 url:"${path}/order/pay.do",
+			 type:"post",
+			 dataType:"text",
+			 data:{
+				 processInstanceId:processInstanceId,
+				 orderId:orderId
+			 },
+			 success:function(respText){
+				 if(respText == "success"){
+					 alert("支付成功");
+				 }
+			 },
+			 error:function(){
+				 alert("系统错误");
+			 }
+			 
+		 });
 	});
 
 	$("#transitAlertIs").click(function(){
@@ -150,7 +174,8 @@ $(function(){
 </ul>
 
 <div class="w ofc case">
-
+	<input type="hidden" id="processInstanceId" value="${processInstanceId }">
+	<input type="hidden" id="orderId" value="${order.orderId }">
 	<div class="confirm">
 		<div class="tl"></div><div class="tr"></div>
 		<div class="ofc">

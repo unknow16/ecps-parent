@@ -36,8 +36,10 @@ public class EbBrandServiceImpl implements EbBrandService {
 		EbBrand brand = this.getBrandById(brandId);
 		brandDao.deleteBrand(brandId);
 		Client client = Client.create();
-		WebResource wr = client.resource(ECPSUtils.readProp("file_server_url") + brand.getImgs());
-		wr.delete();
+		if(brand.getImgs()!= null) {
+			WebResource wr = client.resource(ECPSUtils.readProp("file_server_url") + brand.getImgs());
+			wr.delete();
+		}
 	}
 
 	public List<EbBrand> selectBrand() {

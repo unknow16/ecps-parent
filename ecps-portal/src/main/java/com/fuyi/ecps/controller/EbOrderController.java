@@ -1,5 +1,6 @@
 package com.fuyi.ecps.controller;
 
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +42,14 @@ public class EbOrderController {
 	@Autowired
 	private EbOrderService orderService;
 
+	/**
+	 * 去订单预提交
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/toSubmitOrder.do")
 	public String toSubmitOrder(HttpServletResponse response, HttpServletRequest request, Model model, HttpSession session) {
 		List<EbCart> cartList = cartService.listCart(request, response);
@@ -67,6 +76,18 @@ public class EbOrderController {
 		return "shop/confirmProductCase";
 	}
 	
+	/**
+	 * 提交订单
+	 * @param order
+	 * @param address
+	 * @param response
+	 * @param request
+	 * @param session
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 * @throws Exception
+	 */
 	@RequestMapping("/submitOrder.do")
 	public String submitOrder(EbOrder order, String address,
 			HttpServletResponse response, HttpServletRequest request, 
@@ -76,7 +97,7 @@ public class EbOrderController {
 			order.setPtlUserId(user.getPtlUserId());
 			order.setUsername(user.getUsername());
 		}
-		order.setOrderNum(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+		order.setOrderNum(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
 		
 		if(!StringUtils.equals("add", address)) {
 			EbShipAddr addr = shipAddrService.getShipAddrById(new Long(address));
@@ -105,13 +126,26 @@ public class EbOrderController {
 			orderDetailList.add(orderDetail);
 		}
 		try {
-			orderService.saveOrder(order, orderDetailList, response, request);
+			String processInstanceId = orderService.saveOrder(order, orderDetailList, response, request);
 			model.addAttribute("order", order);
+			model.addAttribute("processInstanceId", processInstanceId);
 		} catch (Exception e) {
 			if(e instanceof EbStockException ) {
 				model.addAttribute("tip", "stock_error");
 			}
 		}
 		return "shop/confirmProductCase2";
+	}
+	
+	/**
+	 * 支付付款
+	 * @param processInstanceId
+	 * @param orderId
+	 * @param out
+	 */
+	@RequestMapping("/pay.do")
+	public void pay(String processInstanceId, Long orderId, PrintWriter out) {
+		orderService.pay(processInstanceId, orderId);
+		out.write("success");
 	}
 }

@@ -2,8 +2,13 @@ package com.fuyi.ecps.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class EbOrder {
+	
+	private List<EbOrderDetail> detailList;
+	
+	//********************************
     private Long orderId;
 
     private Long ptlUserId;
@@ -116,7 +121,16 @@ public class EbOrder {
 
     private String orderExt5;
 
-    public Long getOrderId() {
+    
+    public List<EbOrderDetail> getDetailList() {
+		return detailList;
+	}
+
+	public void setDetailList(List<EbOrderDetail> detailList) {
+		this.detailList = detailList;
+	}
+
+	public Long getOrderId() {
         return orderId;
     }
 

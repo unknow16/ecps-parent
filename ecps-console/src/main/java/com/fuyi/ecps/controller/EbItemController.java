@@ -81,6 +81,14 @@ public class EbItemController {
 		return "item/addItem";
 	}
 	
+	/**
+	 * 添加商品
+	 * @param item
+	 * @param itemClob
+	 * @param request
+	 * @param divNum
+	 * @return
+	 */
 	@RequestMapping("/addItem.do")
 	public String addItem(EbItem item, EbItemClob itemClob, HttpServletRequest request, Integer divNum) {
 		item.setItemNo(new SimpleDateFormat("yyyyMMddHHmmssSSSS").format(new Date()));

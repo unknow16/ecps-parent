@@ -31,6 +31,12 @@ public class EbBrandServiceTest {
 		ebBrand.setWebsite("http://www.baidu.com");
 		service.saveBrand(ebBrand);
 	}
+	
+	@Test
+	public void testDeploy() {
+		FlowService fs = (FlowService) ctx.getBean("flowServiceImpl");
+		fs.deployFlow();
+	}
 
 	@Test
 	public void testGetBrandById() {

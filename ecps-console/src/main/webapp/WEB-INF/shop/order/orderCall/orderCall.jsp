@@ -53,7 +53,7 @@ function exportOrder(s){
             <input id="button1" type="button" class="hand btn120x20" onclick="exportOrder(1)" value="导出当前页订单"/>&nbsp;&nbsp;<input id="button2" type="button" class="hand btn120x20" onclick="exportOrder(2)" value="导出全部订单"/>
         </span>
     </h2>
-    <form action="${path}/order/orderCall.do" id="form1" name="form1" method="post">
+    <%-- <form action="${path}/order/orderCall.do" id="form1" name="form1" method="post">
      <div class="sch"><p>查询：
      <select id="orderSource" name="orderSource">
 		<option value="0" ${orderSource==0?'selected':'' }>前台订单</option>
@@ -121,6 +121,56 @@ function exportOrder(s){
 	        <input type="button" onclick="gotoPage('jump')" value="<fmt:message key="tag.page.jump"/>" class="hand" />
     	</span>
 	</div>
+    </form> --%>
+    
+    <form action="${path}/order/orderPay.do" id="form1" name="form1" method="post">
+     
+
+   <table cellspacing="0" summary="" class="tab" id="myTable">
+    <tr>
+    <th>订单号</th>
+    <th>收货人</th>
+    <th>联系电话</th>
+    <th>支付金额</th>
+    <th>支付方式</th>
+    <th>支付状态</th>
+    <th>下单时间</th>
+    <th>操作时间</th>
+    <th>订单状态</th>
+    <th>操作</th>
+    </tr>
+    
+    <c:forEach items="${paidOrderList }" var="tb">
+	    <tr>
+	    <td><a href="/ecps-console/order/orderPay/detail.do?orderId=3101">${tb.order.orderNum }</a></td>
+	    <td>${tb.order.shipName }</td>
+	    <td>${tb.order.phone }</td>
+	    <td>${tb.order.orderSum }</td>
+	    <td>在线支付</td>
+	    <td>
+	    	<c:if test="${tb.order.isPaid == 1 }"> 已付款 </c:if>
+	    	<c:if test="${tb.order.isPaid == 0 }"> 未付款 </c:if>
+	    </td>
+	    <td class="nwp">
+	    	<fmt:formatDate value="${tb.order.orderTime }" pattern="yyyy-MM-dd HH:mm:ss"/>
+	    </td>
+	    <td class="nwp">
+			<fmt:formatDate value="${tb.order.updateTime }" pattern="yyyy-MM-dd HH:mm:ss"/>
+		</td>
+	    <td class="nwp">
+	    	已付款单
+	    </td>
+	    <td><a href="${path }/order/selectPaidOrderAndDetail.do?orderId=${tb.order.orderId}&taskId=${tb.task.id}">查看</a></td>
+	    </tr>
+    </c:forEach>
+    
+    
+    
+    
+    
+
+    </table>
+  	<input type="hidden"  id="orderState" value="${orderState }">
     </form>
 
 </div></div>

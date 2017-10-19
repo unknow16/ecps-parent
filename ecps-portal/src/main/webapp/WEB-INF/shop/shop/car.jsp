@@ -39,7 +39,7 @@ $(function(){
 	$("#transitAlertIs").click(function(){
 		tipShow('#transitAlert');
 	});
-
+	
 	
 	//前台用户输入校验
 	$("#.bg_text input").blur(function() {
@@ -214,6 +214,10 @@ function validStock(skuId,quantity) {
 		}
 	});
 	return result;
+}
+
+function clearCart() {
+	window.location.href = "${path}/cart/clearCart.do";
 }
 </script>
 </head>
