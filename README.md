@@ -17,4 +17,4 @@
 	* tomcat服务器下没创建upload文件夹
 
 ### 部署图
-* ![deploy img](https://github.com/unknow16/ecps-parent/raw/master/deploy.png)
+* ![deploy img](https://github.com/unknow16/ecps-parent/raw/master/screenshots/deploy.png)
