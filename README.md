@@ -1,5 +1,12 @@
 ## 电商项目
 
+### 开发构建管理
+* ![deploy img](https://github.com/unknow16/ecps-parent/raw/master/screenshots/build.png)
+* 
+
+### 部署图
+* ![deploy img](https://github.com/unknow16/ecps-parent/raw/master/screenshots/deploy.png)
+
 ### 常见问题
 * jersey.api.client.UniformInterfaceException ：returned a response status of 403 Forbidden
 * 一直报错：
@@ -16,5 +23,3 @@
 * 409
 	* tomcat服务器下没创建upload文件夹
 
-### 部署图
-* ![deploy img](https://github.com/unknow16/ecps-parent/raw/master/screenshots/deploy.png)
