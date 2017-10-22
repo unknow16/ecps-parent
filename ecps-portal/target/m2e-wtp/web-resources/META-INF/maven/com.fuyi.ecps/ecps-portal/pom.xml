@@ -349,11 +349,11 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.springframework.scheduling</groupId>
 			<artifactId>quartz</artifactId>
 			<scope>compile</scope>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -361,7 +361,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.jbpm.jbpm4</groupId>
 			<artifactId>jbpm-api</artifactId>
 		</dependency>
@@ -386,7 +386,7 @@
 		<dependency>
 			<groupId>org.jbpm.jbpm4</groupId>
 			<artifactId>jbpm-db</artifactId>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>

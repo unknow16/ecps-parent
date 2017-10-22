@@ -58,6 +58,12 @@ public class EbItemController {
 		return "phoneClassification";
 	}
 	
+	/**
+	 * 商品详情
+	 * @param itemId
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/productDetail.do")
 	public String productDetail(Long itemId, Model model) {
 		EbItem item = itemService.selectItemDetailById(itemId);

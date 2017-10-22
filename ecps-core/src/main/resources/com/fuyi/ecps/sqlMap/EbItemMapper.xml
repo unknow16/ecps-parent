@@ -527,7 +527,7 @@
 	from eb_item ei,eb_sku es
 	
 	<where>
-		ei.ITEM_ID = es.item_id
+		ei.item_id = es.item_id
 		<if test="minPrice != null">
 			and es.SKU_PRICE BETWEEN #{minPrice} and #{maxPrice}
 		</if>
@@ -631,6 +631,7 @@
   	</collection>
   </resultMap>
   
+  <!-- 商品单品详情页 -->
   <select id="selectItemDetailById" parameterType="long" resultMap="itemDetailRM">
 	  select * 
 		from eb_item ei,

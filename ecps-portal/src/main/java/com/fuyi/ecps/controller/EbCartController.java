@@ -30,6 +30,13 @@ public class EbCartController {
 	@Autowired
 	private EbCartService cartService;
 	
+	/**
+	 * 去购物车列表
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/listCart.do")
 	public String listCart(HttpServletRequest request, HttpServletResponse response, Model model) {
 		List<EbCart> cartList = cartService.listCart(request, response);

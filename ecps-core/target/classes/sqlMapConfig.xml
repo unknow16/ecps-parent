@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<mapper resource="com/fuyi/ecps/sqlMap/EbShipAddrMapper.xml"/>
 		<mapper resource="com/fuyi/ecps/sqlMap/EbOrderMapper.xml"/>
 		<mapper resource="com/fuyi/ecps/sqlMap/EbOrderDetailMapper.xml"/>
+		<mapper resource="com/fuyi/ecps/sqlMap/EbConsoleLogMapper.xml"/>
 	</mappers>
 
 </configuration>

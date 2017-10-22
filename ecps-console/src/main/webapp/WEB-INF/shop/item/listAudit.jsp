@@ -30,6 +30,7 @@
 			$("#next").hide();
 		}
 		
+		
 		$("#next").click(function(){
 			pageNo++;
 			$("#pageNo").val(pageNo);
@@ -59,204 +60,40 @@
 		
 		$("#selectPage").val(pageNo);
 		
-		
-		
-		/* //获得总记录数
-    	var totalCount = parseInt($("#totalCount").val());
-    	//获得当前页
-    	var currentPageNo = parseInt($("#currentPageNo").val());
-    	//总页数
-    	var totalPage = parseInt($("#totalPage").val()); */
-    	
-    	<%-- <span class="r page">
-        <input type="hidden" value="${pageNo}" id="pageNo" name="pageNo" />
-        <input type="hidden" value="${page.totalCount}" id="totalCount" name="totalCount" />
-        <input type="hidden" value="${page.pageNo}" id="currentPageNo" name="currentPageNo" />
-        <input type="hidden" value="${page.pageNum}" id="totalPage" name="totalPage" />
-                共<var id="pagePiece" class="orange">0</var>条<var id="pageTotal">1/1</var>
-        <a href="javascript:void(0);" id="previous"  title="上一页">上一页</a>
-        <a href="javascript:void(0);" id="next"  title="下一页">下一页</a>
-    </span> --%>
-    	
-    	/* //设置总记录数
-    	$("#pagePiece").html(totalCount);
-    	//设置当前页和总页数
-    	
-    	$("#pageTotal").html(currentPageNo+"/"+totalPage);
-    	//如果当前页是第一页并且总记录数小于每页的记录数
-    	if(currentPageNo <= 1 && totalCount < 5){
-    		$("#previous").hide();
-    		$("#next").hide();
-    		//如果当前页是第一页并且总记录数大于每页的记录数
-    	}else if(currentPageNo <= 1 && totalCount >= 5){
-    		$("#next").show();	
-    		$("#previous").hide();
-    		//如果当前页是最后一页并且总页数是只有一页
-    	}else if(currentPageNo >= totalPage && totalPage == 1){
-    		$("#next").hide();
-    		$("#previous").hide();
-    		//如果当前页是最后一页并且总页数是不只一页
-    	}else if(currentPageNo >= totalPage && totalPage != 1){
-    		$("#next").hide();
-    		$("#previous").show();
-    	}
-    	//点击下一页对表单的提交
-    	$("#next").click(function(){
-    		if(currentPageNo < totalPage){
-    			$("#pageNo").val(currentPageNo+1);
-    		}else{
-    			$("#pageNo").val(currentPageNo);
-    		}
-    		$("#form1").submit();
-    	});
-    	//点击上一页对表单的提交
-    	$("#previous").click(function(){
-    		if(currentPageNo > 1){
-    			$("#pageNo").val(currentPageNo-1);
-    		}else{
-    			$("#pageNo").val(currentPageNo);
-    		}
-    		$("#form1").submit();
-    	});
-    	
-    	$("a[pass]").click(function(){
-    		var itemId = $(this).attr("itemId");
-    		if(confirm("确认要通过吗？")){
-    			window.location.href = "${path}/item/updateStatus.do?itemId="+itemId+"&auditStatus=1"
-    		}
-    	});
-    	$("a[nopass]").click(function(){
-    		var itemId = $(this).attr("itemId");
-    		if(confirm("确认要不通过吗？")){
-    			window.location.href = "${path}/item/updateStatus.do?itemId="+itemId+"&auditStatus=2"
-    		}
-    	}); */
-    	
-    	
-    	
-	});
-
-	/* $(document).ready(function(){
-    	 var obj=null;
-    	$("a[group]").click(function(){
-    		$("#errorInfoAdd").html("<label>&nbsp;</label>");
-		    $("#itemNote").val("");
-		    tipHide("#errorInfoAdd");
-			tipShow('#addItemNote');
-			var d=$("#addItemNote h2").attr("title","商品审核").html("商品审核");
-    		obj=$(this);
-		});
-    	$("input[id='confirmDivOk']").click(function(){
-            var form = document.getElementById("form1");
-            form.action = objDelUrl + "?itemId=" + objItemId;
-            form.submit();
-        })
-    	$("input[id='addItemNoteConfirm']").click(function(){
-    		if(obj==null){
-    			return;
-    		}
-    		var value=obj.attr("group");
-			var itemId=value.split(",")[0];
-			var auditStatus=value.split(",")[1];
-			var itemNote=$("#itemNote").val();
-			if(itemNote.length>90){
-				tipShow("#errorInfoAdd");
-				$("#errorInfoAdd").html("<label>&nbsp;</label>操作备注不能大于90个字符");
-				return;
-			}
-			var ajaxData="itemId="+itemId+"&auditStatus="+auditStatus+"&itemNote="+itemNote;
-	        $.ajax({
-	        	type:"post",
-	         	url:"${base}/item/updateItem.do",
-	         	data:(ajaxData),
-	         	success:function(responseText){
-	            	var result=eval("("+responseText+")");
-	             	if(result._status=="true"){
-	             		alert("操作成功");
-	             		window.location.href=window.location.href;
-	             	}else{
-	             		alert(result._mes);
-	             	}
-	             	tipHide('#addItemNote');
-	        	}
-	        });
-    	});
-    	
-    	
-    });
-    
-    function orderBy(orderBy,orderByStatus){
-        $("#orderBy").val(orderBy);//代表按那个字段排序
-        $("#orderByStatus").val(orderByStatus);//代表排序方式，即升序还是降序
-        goSearch('#form1','#userSearch');
-    }
-
-    $(document).ready(function(){
-        searchText('#searchText','#userSearch',40);
-        pageInitialize('#form1','#userSearch');
-        $('#goSearch').click(function(){        	
-            $("#pageNo").val(1);
-            goSearch('#form1','#userSearch');
-        });
-    });
-
-    function singleDel(itemId) {
-        var delChkUrl = $("#deleteCheckAction").val();
-        
-        var options = {
-                beforeSubmit: showDeleteCheckRequest,
-                success:      showDeleteCheckResponse,
-                type:         'post',
-                dataType:     "script",
-                data:{
-                    'itemId':itemId
-                },
-                url:          delChkUrl
-        };
-        $('#form1').ajaxSubmit(options);
-    }
-
-    function showDeleteCheckRequest(formData, jqForm, options) {
-        return true;
-    }
-
-    function showDeleteCheckResponse(responseText, statusText, xhr, $form) {
-        responseText = $.parseJSON(responseText);
-        var status = responseText[0].deleteAble;
-        if (status == "true") {
-            var itemId = responseText[0].itemId;
-            var delUrl = $("#deleteAction").val();
-            tipShow('#confirmDiv');
-            objItemId = itemId;
-            objDelUrl = delUrl;
-        } else if (status == "false") {
-            alert(responseText[0]._mes);
-        } else {
-            alert("删除失败！");
-        }
-
-    } */
-    
-    
-    
-    //上下架状态回显
-    $(document).ready(function(){
+    	//上下架状态回显
         if($("#auditStatus").val()=='0'){
             $("#label1") .attr("class","here");
-        }
-        else if($("#auditStatus").val()==2){
+        } else if($("#auditStatus").val()==2){
             $("#label2") .attr("class","here");
-        }
-       else  if($("#auditStatus").val()==1){
+        } else  if($("#auditStatus").val()==1){
             $("#label3") .attr("class","here");
-        }
-        else $("#label4") .attr("class","here");
-    });
+        }  else $("#label4") .attr("class","here");
+    	
+    	$("#addItemNoteConfirm").click(function(){
+    		var notes = $("#itemNote").val();
+    		$("#notes").val(notes);
+    		//提交表单
+    		$("#auditForm").submit();
+    	});
+	});
+    
+    
+function isPass(itemId, auditStatus) {
+	$("#addItemNoteH2").html("商品审核");
+	$("#itemNote").val("");
+	tipShow("#addItemNote");
+	$("#itemId").val(itemId);
+	$("#myAuditStatus").val(auditStatus);
+}
 
 </script>
 </head>
 <body id="main">
-
+<form id="auditForm" action="${path }/item/auditItem.do" method="post">
+	<input id="itemId" type="hidden" name="itemId" />
+	<input id="myAuditStatus" type="hidden" name="auditStatus">
+	<input id="notes" type="hidden" name="notes">
+</form>
 <div class="frameL"><div class="menu icon">
     <jsp:include page="/${system}/common/itemmenu.jsp"/>
 </div></div>
@@ -349,19 +186,15 @@
                 </td>
                
 				<td>
-							<a href="/ecps-console/shop/item/viewItem.jsp" title="查看">查看</a>
-					  	
-					  		
-					  		<c:if test="${item.auditStatus == 2 }">
-					  			<a href="/ecps-console/ecps/console/item/editItem.do?type=1&itemId=2384">编辑</a>
-					  		</c:if>
-					  		<c:if test="${item.auditStatus == 0 }">
-					  			<a href="javascript:void(0);">通过</a>
-					  			<a href="javascript:void(0);">不通过</a>
-					  		</c:if>
-					  		
-					  		
-					  			
+					<a href="/ecps-console/shop/item/viewItem.jsp" title="查看">查看</a>
+			  		
+			  		<c:if test="${item.auditStatus == 2 }">
+			  			<a href="/ecps-console/ecps/console/item/editItem.do?type=1&itemId=2384">编辑</a>
+			  		</c:if>
+			  		<c:if test="${item.auditStatus == 0 }">
+			  			<a href="javascript:void(0);" onclick="isPass(${item.itemId}, 1)">通过</a>
+			  			<a href="javascript:void(0);" onclick="isPass(${item.itemId}, 2)">不通过</a>
+			  		</c:if>
 					  			
 				</td>
 			</tr>

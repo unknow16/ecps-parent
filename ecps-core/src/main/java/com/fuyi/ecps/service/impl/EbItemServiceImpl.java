@@ -1,5 +1,6 @@
 package com.fuyi.ecps.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +9,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fuyi.ecps.dao.EbConsoleLogDao;
 import com.fuyi.ecps.dao.EbItemClobDao;
 import com.fuyi.ecps.dao.EbItemDao;
 import com.fuyi.ecps.dao.EbParaValueDao;
 import com.fuyi.ecps.dao.EbSkuDao;
+import com.fuyi.ecps.model.EbConsoleLog;
 import com.fuyi.ecps.model.EbItem;
 import com.fuyi.ecps.model.EbItemClob;
 import com.fuyi.ecps.model.EbParaValue;
@@ -37,6 +40,12 @@ public class EbItemServiceImpl implements EbItemService {
 	@Autowired
 	private EbItemClobDao itemClobDao;
 	
+	@Autowired
+	private EbConsoleLogDao consoleLogDao;
+	
+	/**
+	 * 根据条件查询商品
+	 */
 	public Page selectItemByCondition(QueryCondition qc) {
 		//总记录数
 		Integer count = itemDao.selectItemByConditionCount(qc);
@@ -93,6 +102,55 @@ public class EbItemServiceImpl implements EbItemService {
 		EbWSItemService wsItemService = wsItemServiceService.getEbWSItemServicePort();
 		
 		return wsItemService.publishItem(itemId, password);
+	}
+
+	@Override
+	public void auditItem(Long itemId, Short auditStatus, String notes) {
+		//更新商品审核状态
+		EbItem item = new EbItem();
+		item.setItemId(itemId);
+		item.setAuditStatus(auditStatus);
+		itemDao.updateItem(item);
+		
+		//记录审核日志
+		EbConsoleLog log = new EbConsoleLog();
+		log.setNotes(notes);
+		log.setEntityId(itemId);
+		log.setEntityName("商品表");
+		log.setOpTime(new Date());
+		if(auditStatus.shortValue() == 1) {
+			log.setOpType("审核商品通过");
+		} else {
+			log.setOpType("审核商品不通过");
+		}
+		log.setTableName("EB_ITEM");
+		log.setUserId(1l);
+		consoleLogDao.saveConsoleLog(log);
+	}
+
+	@Override
+	public void showItem(Long itemId, Short showStatus) {
+		//更新商品上下架状态
+		EbItem item = new EbItem();
+		item.setItemId(itemId);
+		item.setShowStatus(showStatus);
+		item.setOnSaleTime(new Date());
+		item.setUpdateTime(new Date());
+		itemDao.updateItem(item);
+		
+		//记录日志
+		EbConsoleLog log = new EbConsoleLog();
+		log.setEntityId(itemId);
+		log.setEntityName("商品表");
+		log.setOpTime(new Date());
+		if(showStatus.shortValue() == 1) {
+			log.setOpType("商品下架");
+		} else {
+			log.setOpType("商品上架");
+		}
+		log.setTableName("EB_ITEM");
+		log.setUserId(1l);
+		consoleLogDao.saveConsoleLog(log);
 	}
 
 }

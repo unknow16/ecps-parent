@@ -17,10 +17,10 @@
          <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
          	<property name="driverClassName" value="oracle.jdbc.OracleDriver"></property>
          	<!-- <property name="driverClassName" value="com.mysql.jdbc.Driver"></property> -->
-         	<property name="url" value="jdbc:oracle:thin:@192.168.157.128:1521:orcl"></property>
+         	<property name="url" value="jdbc:oracle:thin:@192.168.11.135:1521:orcl"></property>
          	<!-- <property name="url" value="jdbc:mysql://localhost:3306/ecps"></property> -->
-         	<property name="username" value="sys as sysdba"></property>
-         	<property name="password" value="abcdef"></property>
+         	<property name="username" value="gx1110"></property>
+         	<property name="password" value="gx1110"></property>
          </bean>
          
          <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

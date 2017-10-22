@@ -35,4 +35,9 @@ public class EbItemDaoImpl extends SqlSessionDaoSupport implements EbItemDao {
 	public EbItem selectItemDetailById(Long itemId) {
 		return this.getSqlSession().selectOne(ns + "selectItemDetailById", itemId);
 	}
+
+	@Override
+	public void updateItem(EbItem item) {
+		this.getSqlSession().update(ns + "updateByPrimaryKeySelective", item);
+	}
 }

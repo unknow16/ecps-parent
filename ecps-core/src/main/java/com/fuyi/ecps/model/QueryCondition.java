@@ -4,9 +4,9 @@ public class QueryCondition {
 	
 	private Integer auditStatus; //审核状态
 	
-	private Integer showStatus; //上下架
+	private Integer showStatus; //上下架状态
 	
-	private Long brandId; 
+	private Long brandId;  
 	
 	private String itemName;
 	

@@ -140,9 +140,11 @@
     where FEATURE_ID = #{featureId,jdbcType=DECIMAL}
   </update>
   
+  <!-- 商品属性，不影响sku价格 -->
   <select id="selectCommFeature" resultMap="BaseResultMap">
   	select * from eb_feature where is_spec = 0
   </select>
+  <!-- 影响价格的属性 -->
   <select id="selectSpecFeature" resultMap="BaseResultMap">
   	select * from eb_feature where is_spec = 1
   </select>

@@ -9,6 +9,7 @@
 <script type="text/javascript">
 $(function(){
 	
+	//获取上下架状态，给tab加样式
 	var showStatus = $("#showStatus").val();
 	if(showStatus == '0'){
 		$("#label5").attr("class", "here");
@@ -36,51 +37,72 @@ $(function(){
 	//获得当前页面和总页数
 	var pageNo = parseInt($("#currentPageNo").val());
 	var totalPage = parseInt($("#totalPage").val());
-	
+	//只有一页
 	if(pageNo == 1 && pageNo == totalPage){
 		$("#previous").hide();
 		$("#next").hide();
-	}else if(pageNo == 1 && pageNo < totalPage){
+	}else if(pageNo == 1 && pageNo < totalPage){ //当前第一页，不只一页
 		$("#previous").hide();
 		$("#next").show();
-	}else if(pageNo > 1 && pageNo < totalPage){
+	}else if(pageNo > 1 && pageNo < totalPage){ //当前不是第一页，多页
 		$("#previous").show();
 		$("#next").show();
-	}else if(pageNo > 1 && pageNo == totalPage){
+	}else if(pageNo > 1 && pageNo == totalPage){ //当前不是第一页，最后一页
 		$("#previous").show();
 		$("#next").hide();
 	}
 	
+	//下一页点击
 	$("#next").click(function(){
 		pageNo++;
 		$("#pageNo").val(pageNo);
 		$("#form1").submit();
 	});
+	
+	//上一页点击
 	$("#previous").click(function(){
 		pageNo--;
 		$("#pageNo").val(pageNo);
 		$("#form1").submit();
 	});
+	
+	//首页
 	$("#firstPage").click(function(){
 		
 		$("#pageNo").val(1);
 		$("#form1").submit();
 	});
+	
+	//尾页
 	$("#lastPage").click(function(){
 		
 		$("#pageNo").val(totalPage);
 		$("#form1").submit();
 	});
 	
+	//跳页
 	$("#selectPage").change(function(){
 		var page = $(this).val();
 		$("#pageNo").val(page);
 		$("#form1").submit();
 	});
-	
+	//
 	$("#selectPage").val(pageNo);
-})
+	
 
+	$("#confirmOk").click(function(){
+		$("#showForm").submit();
+	});
+});
+
+//上下架商品
+function isShow(itemId, showStatus) {
+	tipShow("#confirm");
+	$("#itemId").val(itemId);
+	$("#myShowStatus").val(showStatus);
+}
+
+//发布静态化页面
 function publish(itemId) {
 	tipShow("#importLoadDiv");
 	
@@ -108,7 +130,10 @@ function publish(itemId) {
 </script>
 </head>
 <body id="main">
-
+<form id="showForm" action="${path }/item/showItem.do" method="post">
+	<input id="itemId" name="itemId" type="hidden"/>
+	<input id="myShowStatus" name="showStatus" type="hidden"/>
+</form>
 <div class="frameL"><div class="menu icon">
     <jsp:include page="/${system}/common/itemmenu.jsp"/>
 </div></div>
@@ -119,8 +144,8 @@ function publish(itemId) {
 
     <h2 class="h2_ch"><span id="tabs" class="l">
         <a id="label6" href="${path}/item/listItem.do"   title="全部实体商品" class="nor">全部</a>
-        <a id="label4" href="${path}/item/listItem.do?showStatus=1"   title="未上架实体商品" class="nor">未上架</a>
-        <a id="label5" href="${path}/item/listItem.do?showStatus=0"  title="已上架实体商品" class="nor">已上架</a>
+        <a id="label4" href="${path}/item/listItem.do?showStatus=1&auditStatus=1"   title="未上架实体商品" class="nor">未上架</a>
+        <a id="label5" href="${path}/item/listItem.do?showStatus=0&auditStatus=1"  title="已上架实体商品" class="nor">已上架</a>
     </span></h2>
 
 <form id="form1" name="form1" action="${path}/item/listItem.do" method="post">
@@ -200,16 +225,18 @@ function publish(itemId) {
                 </td>
                
 				<td>
-							<a href="/ecps-console/shop/item/viewItem.jsp" title="查看">查看</a>
 					  	
 					  		
-					  		
-					  			<a href="/ecps-console/ecps/console/item/editItem.do?type=1&itemId=2384">编辑</a>
-					  			<a href="javascript:void(0);" onclick="singleDel('2384')">删除</a>
-					  			<a href="javascript:void(0);" group="2384,0" itemId=3184 showStatus="0">上架</a>
-					  			<a href="javascript:void(0);" onclick="publish(${item.itemId})">发布</a>
-					  		
-					  		
+				<a href="/ecps-console/shop/item/viewItem.jsp" title="查看">查看</a>
+	  			<c:if test="${item.showStatus == 1 }">
+		  			<a href="/ecps-console/ecps/console/item/editItem.do?type=1&itemId=2384">编辑</a>
+		  			<a href="javascript:void(0);" onclick="singleDel('2384')">删除</a>
+		  			<a href="javascript:void(0);" onclick="isShow(${item.itemId}, 0)">上架</a>
+	  			</c:if>
+	  			<c:if test="${item.showStatus == 0 }">
+		  			<a href="javascript:void(0);" onclick="isShow(${item.itemId}, 1)">下架</a>
+		  			<a href="javascript:void(0);" onclick="publish(${item.itemId})">发布</a>
+	  			</c:if>
 					  			
 					  			
 				</td>

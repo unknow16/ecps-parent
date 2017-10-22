@@ -21,7 +21,7 @@ public class FMUtils {
 		//获得包的模版
 		Template template = cf.getTemplate(ftlName);
 		
-		String path = "E:\\workspace-eclipse-mars\\ecps-parent\\ecps-portal\\src\\main\\webapp\\static";
+		String path = "D:\\workspaces\\mars1\\ecps-parent\\ecps-portal\\src\\main\\webapp\\static";
 		
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(path + "/" + fileName)), "UTF-8"));
 		template.process(map, writer);

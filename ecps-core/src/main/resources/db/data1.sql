@@ -1,121 +1,60 @@
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (3004, '1', null, '/upload/ecps/resource/1369725378114129798088.jpg', null, 1);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1000, '波导', null, '/upload/ecps/resource/1351478761609141540735.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1001, '华为', null, '/upload/ecps/resource/1351478918676104978608.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1002, '联想', null, '/upload/ecps/resource/1351479001579109452339.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1003, '三星', null, '/upload/ecps/resource/1351479108778166100728.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1004, '中兴', null, '/upload/ecps/resource/1351479208124190223249.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1005, '天语', null, '/upload/ecps/resource/1351479330326136850862.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1006, '天迈', null, '/upload/ecps/resource/1351479515808106398938.JPG', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1007, '酷派', null, '/upload/ecps/resource/1351479601015179106601.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1008, '海信', null, '/upload/ecps/resource/1351479849306158394130.JPG', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1009, '金立', null, '/upload/ecps/resource/1351479925467102309116.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1010, '摩托罗拉', null, '/upload/ecps/resource/1351480012446191380436.jpg', null, null);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1041, '步步高', null, '/upload/ecps/resource/1365321997034103071485.jpg', null, 1);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1042, '诺基亚', null, '/upload/ecps/resource/1365322032346400053300226.jpg', null, 1);
-insert into EB_BRAND (BRAND_ID, BRAND_NAME, BRAND_DESC, IMGS, WEBSITE, BRAND_SORT)
-values (1043, 'HTC', null, '/upload/ecps/resource/1369885015046118179024.jpg', null, null);
+create table EB_FEATURE
+(
+  feature_id    NUMBER(11) not null,
+  cat_id        NUMBER(11),
+  feature_name  VARCHAR2(80) not null,
+  is_spec       NUMBER(1),
+  is_select     NUMBER(1),
+  is_show       NUMBER(1),
+  select_values VARCHAR2(800),
+  input_type    NUMBER(2),
+  feature_sort  NUMBER(5)
+)
+;
+comment on table EB_FEATURE
+  is '商品属性
+预置的手机参数（请将预置可选值补充完整）
+1.      型号                   字符串
+2.      外观                   下拉列表；预置可选值：直板、翻盖、滑盖、旋盖
+3.      操作系统                   下拉列表；预置可选值：Symbian、WindowsMobile、Android, iOS、其他智能系统、非智能系统
+4.      操作方式                   下拉列表；预置可选值：电容触屏、电阻触屏、全键盘、标准键盘
+5.      内存                   字符串
+6.      储存卡              字符串
+7.      屏幕分辨率              字符串
+8.      摄像头              字符串
+9.      连接方式                   复选框；预置可选值： WIFI、蓝牙、红外，默认都不勾选
+10.   机身尺寸                   字符串
+11.   重量                   字符串     默认以KG为单位
+12.   特性                   字符串
 
+预置的手机规格（请将预置可选值补充完整）
+1.      颜色                   下拉列表；预置可选值：白色、黑色
+2.      存储量              下拉列表；预置可选值：16G、32G
+预置的号卡参数
+1. 号段
+2. 号码规律，可选值：AAAA、ABCDE、AAA、ABCD、ABCABC、ABABAB、AABB
+3. 其他条件，可选值：含一个8、含两个8、不含4、含1314、含520、含00
+';
+comment on column EB_FEATURE.feature_id
+  is '商品属性主键';
+comment on column EB_FEATURE.feature_name
+  is '属性名称';
+comment on column EB_FEATURE.is_spec
+  is '是否为规格：0.为否 1.为是';
+comment on column EB_FEATURE.is_select
+  is '是否为筛选：0为否 1为是';
+comment on column EB_FEATURE.is_show
+  is '是否前台显示：0.为否 1.为是';
+comment on column EB_FEATURE.select_values
+  is '属性可选值：用英文逗号分割的可选值，可选值里不许有逗号';
+comment on column EB_FEATURE.input_type
+  is '录入方式：1.树状菜单，2.单选，3.复选，4.文本框';
+comment on column EB_FEATURE.feature_sort
+  is '前台显示排序';
+alter table EB_FEATURE
+  add constraint PK_EB_FEATURE primary key (FEATURE_ID);
 
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1000);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1001);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1002);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1003);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1004);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1005);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1006);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1007);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1008);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1009);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1010);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1041);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1042);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (1, 1043);
-insert into EB_CATBRAND (CAT_ID, BRAND_ID)
-values (3000, 1043);
-
-insert into EB_CAT (CAT_ID, CAT_NAME, CAT_DESC, PARENT_ID, CAT_SORT, KEYWORDS, PATH, MARK, ISDISPLAY, FULL_PATH, CAT_TYPE)
-values (3000, '手机通讯子类', '手机通讯描述', 1, 3, '手机通讯关键词', '3', '3', 1, '/1/3000/', 1);
-insert into EB_CAT (CAT_ID, CAT_NAME, CAT_DESC, PARENT_ID, CAT_SORT, KEYWORDS, PATH, MARK, ISDISPLAY, FULL_PATH, CAT_TYPE)
-values (1, '手机通讯', '是', 0, 2, '啊', 'SJTX', 'SJTX', 1, '/1/', 1);
-
-insert into EB_ITEM (item_id, item_name, item_no, brand_id, cat_id, tag_img_id, tag_img, is_new, is_good, is_hot, promotion, audit_status, show_status, imgs, keywords, page_desc, item_recycle, on_sale_time, check_time, update_time, update_user_id, create_time, checker_user_id, full_path_deploy, full_path_deploy_offer, original_item_id, last_status, merchant_id, item_sort, sales, create_user_id, sim_level, gift_desc, gift_img, gift_show_type, img_size1)
-values (4239, '小米3', '20150308153242174', 3819, 1, null, null, 1, 1, 1, '配置非常非常高', 1, 0, '/image/20150308153050009097.jpg', '配置非常非常高', '配置非常非常高', null, null, null, to_timestamp('08-03-2015 15:32:53.738000', 'dd-mm-yyyy hh24:mi:ss.ff'), 1, to_timestamp('08-03-2015 15:32:42.000000', 'dd-mm-yyyy hh24:mi:ss.ff'), null, null, null, null, null, null, null, 0, null, null, null, null, null, null);
-
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7770, 4239, 2020, 'Android4.0');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7771, 4239, 2044, '32GB');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7772, 4239, 2045, '768MB');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7773, 4239, 2060, '可支持32GB以上');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7774, 4239, 2061, '5英寸');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7775, 4239, 2080, '480×854像素');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7776, 4239, 2142, 'HD Super AMOLED ');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7777, 4239, 2143, '单卡双模');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7778, 4239, 2040, '直板');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7779, 4239, 2041, '标准键盘');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7780, 4239, 2063, '1600万色');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7781, 4239, 2081, '高通骁龙S4');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7782, 4239, 2100, '锂电池（1650mAh）');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7783, 4239, 2101, '2013年');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7784, 4239, 2140, '3G手机,智能手机,商务手机');
-insert into EB_PARA_VALUE (para_id, item_id, feature_id, para_value)
-values (7785, 4239, 2141, '电容屏,多点触控 ');
-
-insert into EB_SKU (sku_id, item_id, sku, sku_price, show_status, stock_inventory, sku_upper_limit, location, sku_img, sku_sort, sku_name, market_price, create_time, update_time, create_user_id, update_user_id, original_sku_id, last_status, merchant_id, sku_type, sales, res_code, pack_id)
-values (4228, 4239, null, 2299, 0, 18, null, null, null, null, null, 2500, null, null, null, null, null, null, null, 1, null, null, null);
-insert into EB_SKU (sku_id, item_id, sku, sku_price, show_status, stock_inventory, sku_upper_limit, location, sku_img, sku_sort, sku_name, market_price, create_time, update_time, create_user_id, update_user_id, original_sku_id, last_status, merchant_id, sku_type, sales, res_code, pack_id)
-values (4229, 4239, null, 2899, 0, 100, null, null, null, null, null, 3000, null, null, null, null, null, null, null, 1, null, null, null);
-
-insert into EB_SPEC_VALUE (spec_id, sku_id, feature_id, spec_value)
-values (4252, 4228, 3061, '32G');
-insert into EB_SPEC_VALUE (spec_id, sku_id, feature_id, spec_value)
-values (4253, 4228, 3080, '白色');
-insert into EB_SPEC_VALUE (spec_id, sku_id, feature_id, spec_value)
-values (4254, 4229, 3061, '64G');
-insert into EB_SPEC_VALUE (spec_id, sku_id, feature_id, spec_value)
-values (4255, 4229, 3080, '白色');
-
+prompt Loading EB_FEATURE...
 insert into EB_FEATURE (feature_id, cat_id, feature_name, is_spec, is_select, is_show, select_values, input_type, feature_sort)
 values (3061, 1, '内存', 1, 0, 1, '16G,32G,64G', 2, 1);
 insert into EB_FEATURE (feature_id, cat_id, feature_name, is_spec, is_select, is_show, select_values, input_type, feature_sort)
@@ -236,3 +175,4 @@ insert into EB_FEATURE (feature_id, cat_id, feature_name, is_spec, is_select, is
 values (2140, 1, '手机类型', 0, 0, 1, '无,3G手机,智能手机,商务手机,拍照手机,平板手机', 3, 1);
 insert into EB_FEATURE (feature_id, cat_id, feature_name, is_spec, is_select, is_show, select_values, input_type, feature_sort)
 values (2141, 1, '触摸屏', 0, 1, 1, '电容屏,多点触控 ', 3, 1);
+commit;

@@ -11,7 +11,7 @@
    <jsp:include page="/ecps/console/common/itemmenu.jsp"/>
 </div></div>
 
-<div class="frameR"><div class="content">
+<div class="frameR">hello world<div class="content">
 
 </div></div>
 </body>

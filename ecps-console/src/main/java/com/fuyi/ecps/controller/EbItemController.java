@@ -70,8 +70,11 @@ public class EbItemController {
 	 */
 	@RequestMapping("/toAddItem.do")
 	public String toAddItem(Model model) {
+		//所有品牌
 		List<EbBrand> brandList = brandService.selectBrand();
+		//商品的属性，不影响价格
 		List<EbFeature> commList = featureService.selectCommFeature();
+		//影响价格的属性
 		List<EbFeature> specList = featureService.selectSpecFeature();
 		
 		model.addAttribute("brandList", brandList);
@@ -178,9 +181,15 @@ public class EbItemController {
 		}
 		
 		itemService.saveItem(item, itemClob, paraValueList, skuList);
-		return "redirect:listItem.do";
+		return "redirect:listItem.do?showStatus=1&auditStatus=1";
 	}
 	
+	/**
+	 * 商品审核列表
+	 * @param qc
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping("/listAudit.do")
 	public String listAudit(QueryCondition qc, Model model) {
 		if(qc.getPageNo() == null) {
@@ -195,6 +204,49 @@ public class EbItemController {
 		return "item/listAudit";
 	}
 	
+	/**
+	 * 审核商品
+	 * @param itemId
+	 * @param auditStatus
+	 * @param notes
+	 * @return
+	 */
+	@RequestMapping("/auditItem.do")
+	public String auditItem(Long itemId, Short auditStatus, String notes) {
+		itemService.auditItem(itemId, auditStatus, notes);
+		return "redirect:listAudit.do?auditStatus=0&showStatus=1"; //showStatus=1为下架
+	}
+	
+	/**
+	 * 上下架商品
+	 * @param itemId
+	 * @param showStatus
+	 * @return
+	 */
+	@RequestMapping("/showItem.do")
+	public String showItem(Long itemId, Short showStatus){
+		itemService.showItem(itemId, showStatus);
+		String flag = "0";
+		if(showStatus.shortValue() == 0) {
+			flag = "1";
+		}
+		return "redirect:listItem.do?showStatus=" + flag + "&auditStatus=1";
+	}
+	
+	/**
+	 * 商品属性列表
+	 * @return
+	 */
+	@RequestMapping("/listFeature.do")
+	public String listFeature() {
+		return "item/listfeature";
+	}
+	
+	/**
+	 * 发布商品静态化页面
+	 * @param itemId
+	 * @param out
+	 */
 	@RequestMapping("/publishItem.do")
 	public void publishItem(Long itemId, PrintWriter out) {
 		
